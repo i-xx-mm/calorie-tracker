@@ -49,9 +49,11 @@ public class User {
         double bmr;
         if ("male".equalsIgnoreCase(gender)) {
             bmr = 10 * currentWeight + 6.25 * height - 5 * age + 5;
-        } else {
-            // female, other
+        } else if ("female".equalsIgnoreCase(gender)) {
             bmr = 10 * currentWeight + 6.25 * height - 5 * age - 161;
+        } else {
+            // gender = other
+            return 2000;
         }
         // TDEE = BMR × Activity Level (1.55 = moderate activity)
         int tdee = Math.round((float) (bmr * 1.55));
