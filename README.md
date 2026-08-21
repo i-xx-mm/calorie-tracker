@@ -1,39 +1,28 @@
-# Calorie Tracker: Full\-Stack Web Application
+# Calorie Tracker: Full-Stack Web Application
 
-# 🎯 Calorie‑Tracker
+# Calorie-Tracker
 
-A modern full‑stack web application for tracking daily calorie intake, including user authentication, BMI calculation, and monthly intake analytics\.
+A modern full-stack web application for tracking daily calorie intake, including user authentication, BMI calculation, and monthly intake analytics\.
 
-
----
-
-## 📋 Table of Contents
-
-1. \[Technology Stack\]\(\#technology\-stack\)
-
-2. \[Prerequisites\]\(\#prerequisites\)
-
-3. \[Project Structure\]\(\#project\-structure\)
-
-4. \[Quick Start\]\(\#quick\-start\)
-
-5. \[Detailed Setup\]\(\#detailed\-setup\)
-
-6. \[API Documentation\]\(\#api\-documentation\)
-
-7. \[Features \& Usage\]\(\#features\-\-usage\)
-
-8. \[Architecture Overview\]\(\#architecture\-overview\)
-
-9. \[Troubleshooting\]\(\#troubleshooting\)
-
-10. \[Common Commands Reference\]\(\#commoncommands\)
-
-10. \[Future Improvements\]\(\#futureimprovements\)
 
 ---
 
-## 🛠 Technology Stack
+## Table of Contents
+- [Technology Stack](#technology-stack)
+- [Prerequisites](#prerequisites)
+- [Project Structure](#project-structure)
+- [Quick Start](#quick-start)
+- [Detailed Setup](#detailed-setup)
+- [API Documentation](#api-documentation)
+- [Features and Usage](#features-and-usage)
+- [Architecture Overview](#architecture-overview)
+- [Troubleshooting](#troubleshooting)
+- [Common Commands Reference](#common-commands-reference)
+- [Future Improvements and Todo](#future-improvements-and-todo)
+
+---
+
+## Technology Stack
 
 ### Frontend
 
@@ -63,7 +52,7 @@ A modern full‑stack web application for tracking daily calorie intake, includi
 
 ---
 
-## 📦 Prerequisites
+## Prerequisites
 
 ### Required Software
 
@@ -76,7 +65,7 @@ node --version
 npm --version
 
 # MongoDB Community (local instance)
-# macOS: brew install mongodb‑community
+# macOS: brew install mongodb-community
 # Windows: install MongoDB Community locally
 
 # Maven 3.8+
@@ -89,9 +78,9 @@ ng version
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-> Repository root name: **`calorie‑tracker`**
+> Repository root name: **`calorie-tracker`**
 > 
 > 
 
@@ -112,12 +101,12 @@ calorie-tracker/
 │   └── pom.xml
 
 └── frontend/
-    └── calorie‑tracker/        # Angular frontend project
+    └── calorie-tracker/        # Angular frontend project
         └── src/app/
             ├── pages/
             │   ├── auth/           # login / register components
             │   ├── dashboard/
-            │   ├── food‑log/
+            │   ├── food-log/
             │   └── profile/
             ├── shared/
             │   ├── components/     # modal / header / notification
@@ -126,19 +115,19 @@ calorie-tracker/
             │   ├── models/
             │   ├── pipes/
             │   └── services/
-            ├── app‑routing.module.ts
+            ├── app-routing.module.ts
             └── app.module.ts
 ```
 
 ---
 
-## 🚀 Quick‑Start
+## Quick-Start
 
 ### 1\. Start Local MongoDB Community
 
 ```bash
 # macOS
-brew services start mongodb‑community
+brew services start mongodb-community
 
 # Verify MongoDB is running locally on 27017
 mongosh --eval "db.adminCommand('ping')"
@@ -148,10 +137,10 @@ mongosh --eval "db.adminCommand('ping')"
 
 ```bash
 # from repo root
-cd calorie‑tracker/backend
+cd calorie-tracker/backend
 
 # build & run spring boot
-mvn spring‑boot:run
+mvn spring-boot:run
 ```
 
 > Backend runs on `http://localhost:8080/api`
@@ -162,9 +151,9 @@ mvn spring‑boot:run
 
 ```bash
 # from repo root
-cd calorie‑tracker/frontend/calorie‑tracker
+cd calorie-tracker/frontend/calorie-tracker
 
-# install dependencies (first‑time only)
+# install dependencies (first-time only)
 npm install
 
 # start angular dev server
@@ -177,7 +166,7 @@ npm start
 
 ---
 
-## 📖 Detailed Setup
+## Detailed Setup
 
 ### Database Setup \(Local MongoDB Community\)
 
@@ -192,13 +181,13 @@ spring:
 
 ```bash
 # stop mongodb when finished
-brew services stop mongodb‑community
+brew services stop mongodb-community
 ```
 
 ### Backend Setup \(Spring Boot\)
 
 ```bash
-cd calorie‑tracker/backend
+cd calorie-tracker/backend
 
 # install maven dependencies
 mvn clean install
@@ -213,26 +202,26 @@ spring:
       uri: mongodb://localhost:27017/calorie_tracker
   security:
     jwt:
-      secret: ${JWT_SECRET:your‑secret‑key‑at‑least‑32‑chars‑long}
+      secret: ${JWT_SECRET:your-secret-key-at-least-32-chars-long}
       expiration: ${JWT_EXPIRATION:86400000} # 24h ms
 
 server:
   port: 8080
   servlet:
-    context‑path: /api
+    context-path: /api
 ```
 
 Run backend:
 
 ```bash
-cd calorie‑tracker/backend
-mvn spring‑boot:run
+cd calorie-tracker/backend
+mvn spring-boot:run
 ```
 
 ### Frontend Setup \(Angular\)
 
 ```bash
-cd calorie‑tracker/frontend/calorie‑tracker
+cd calorie-tracker/frontend/calorie-tracker
 
 npm install
 ```
@@ -256,7 +245,7 @@ npm start
 
 ---
 
-## 🔗 API Documentation
+## API Documentation
 
 ### Authentication
 
@@ -360,7 +349,7 @@ GET /api/dashboard/monthly-stats?month=8
 
 ---
 
-## ✨ Features \& Usage
+## Features and Usage
 
 - **JWT User Authentication**: Secure register, login, and session persistence
 
@@ -384,7 +373,7 @@ TDEE = BMR × 1.55 (moderate activity level)
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ```Plain Text
 Angular Frontend (localhost:4200)
@@ -408,7 +397,7 @@ Local MongoDB Community (port 27017)
 
 ---
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 #### Port 8080 Already in Use
 
@@ -448,34 +437,34 @@ ng serve --port 4201
 
 ---
 
-## 📝 Common Commands Reference
+## Common Commands Reference
 
 ```bash
 # Start local MongoDB
-brew services start mongodb‑community
+brew services start mongodb-community
 
 # Backend
-cd calorie‑tracker/backend
-mvn spring‑boot:run
+cd calorie-tracker/backend
+mvn spring-boot:run
 mvn clean install
 mvn test
 
 # Frontend
-cd calorie‑tracker/frontend/calorie‑tracker
+cd calorie-tracker/frontend/calorie-tracker
 npm start
 ng lint
 ```
 
 ---
 
-## 📋 Future Improvements / Todo
+## Future Improvements and Todo
 ### Backend
 - Add more unit test coverage for controller authenticated endpoints
 - Expand integration tests for MongoDB repository layer
 
 ### Frontend
 - Add more unit tests for Angular components & services
-- Add e2e end‑to‑end test
+- Add e2e end-to-end test
 
 ### Demo & Documentation
 - Add project demo screenshots / GIF of core workflow
