@@ -9,18 +9,18 @@
 
   <div *ngIf="!loading && dashboardData" class="dashboard-content">
     <div class="dashboard-grid">
-      <!-- Calorie Tracking Card -->
       <div class="card calorie-card">
         <h2>Today's Calorie Intake</h2>
         <div class="calorie-circle">
           <svg viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="54" class="circle-bg"></circle>
-            <circle 
-              cx="60" 
-              cy="60" 
-              r="54" 
-              [class]="'circle-progress ' + getCaloriePercentageClass((dashboardData.calorieTracking?.percentage || 0))"
-              [style.stroke-dasharray]="((dashboardData.calorieTracking?.percentage || 0) / 100 * 340) + ' 340'">
+            <circle
+              cx="60"
+              cy="60"
+              r="54"
+              class="circle-progress"
+              [ngClass]="getCaloriePercentageClass(dashboardData.calorieTracking?.percentage || 0)"
+              [style.stroke-dasharray]="getRingDashArray(dashboardData.calorieTracking?.percentage)">
             </circle>
           </svg>
           <div class="circle-text">
@@ -28,16 +28,20 @@
             <div class="unit">kcal</div>
           </div>
         </div>
+
         <div class="calorie-info">
           <p><strong>Daily Goal:</strong> {{ dashboardData.calorieTracking?.suggestedDaily }} kcal</p>
-          <p><strong>Remaining:</strong> <span [class]="(dashboardData.calorieTracking?.remaining || 0) < 0 ? 'text-danger' : 'text-success'">
-            {{ dashboardData.calorieTracking?.remaining }} kcal
-          </span></p>
-          <p><strong>Progress:</strong> {{ dashboardData.calorieTracking?.percentage }}%</p>
+          <p>
+            <strong>Remaining:</strong>
+            <span [class]="(dashboardData.calorieTracking?.remaining || 0) < 0 ? 'text-danger' : 'text-success'">
+              {{ dashboardData.calorieTracking?.remaining }} kcal
+            </span>
+          </p>
+          <p><strong>Progress:</strong> {{ dashboardData.calorieTracking?.percentage | number:'1.0-0' }}%</p>
         </div>
       </div>
 
-            <div class="card monthly-card">
+      <div class="card monthly-card">
         <!-- Monthly Summary Card - No Data -->
         <div *ngIf="!(monthlyStats?.dailyData?.length ?? 0)" class="empty-chart-state">
           <div class="empty-icon">📊</div>
@@ -109,7 +113,6 @@
                 [attr.points]="getLinePoints()" 
                 class="data-line"
                 fill="none" 
-                stroke="#667eea" 
                 stroke-width="2" 
                 stroke-linecap="round" 
                 stroke-linejoin="round" />

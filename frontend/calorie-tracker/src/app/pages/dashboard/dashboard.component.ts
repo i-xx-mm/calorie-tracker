@@ -88,6 +88,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getCaloriePercentageClass(percentage: number): string {
+    if (!isFinite(percentage)) return '';
     if (percentage < 50) return 'progress-low';
     if (percentage < 100) return 'progress-normal';
     if (percentage < 150) return 'progress-high';
@@ -196,5 +197,11 @@ export class DashboardComponent implements OnInit {
   formatDateLabel(dateString: string): string {
     const [year,month,day] = dateString.split('-');
     return `${month}/${day}`;
+  }
+
+  getRingDashArray(percentage: number | undefined): string {
+    const p = percentage ?? 0;
+    const capped = Math.min(p, 100);
+    return `${(capped / 100 * 340)} 340`;
   }
 }

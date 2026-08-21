@@ -30,14 +30,14 @@ public class DashboardService {
         Integer consumed = foodLogService.getTotalCaloriesForDate(username, today);
 
         Integer suggestedDaily = userService.getGoalCalories(username);
-        Integer remaining = Math.max(0, suggestedDaily - consumed);
-        Integer percentage = (consumed * 100) / suggestedDaily;
+        Integer remaining = suggestedDaily - consumed;
+        double percentage = suggestedDaily == 0 ? 0d : (consumed * 100.0) / suggestedDaily;
 
         DashboardDto.CalorieTrackingDto calorieTracking = DashboardDto.CalorieTrackingDto.builder()
                 .consumed(consumed)
                 .suggestedDaily(suggestedDaily)
                 .remaining(remaining)
-                .percentage(Math.min(percentage, 100))
+                .percentage(percentage)
                 .build();
 
         BMIResponse bmi = userService.calculateBMI(username);
@@ -104,6 +104,12 @@ public class DashboardService {
             item.put("totalCalories", entry.getValue());
             dailyDataList.add(item);
         }
+
+        dailyDataList.sort( (a,b) -> {
+            String dateA = (String) a.get("date");
+            String dateB = (String) b.get("date");
+            return dateA.compareTo(dateB);
+        });
 
         int sumCal = dailyTotals.values().stream().mapToInt(Integer::intValue).sum();
         int averageDaily = dailyTotals.isEmpty() ? 0 : sumCal / Math.max(dailyTotals.size(), 1);

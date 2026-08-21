@@ -28,7 +28,7 @@ public class DashboardDto {
         private Integer consumed;
         private Integer suggestedDaily;
         private Integer remaining;
-        private Integer percentage;
+        private Double percentage;
     }
 
     @Data

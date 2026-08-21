@@ -99,20 +99,17 @@
   transition: stroke-dasharray 0.5s ease;
 }
 
-.progress-low {
-  stroke: #28a745;
+.circle-progress.progress-low {
+  stroke: #28a745 !important;
 }
-
-.progress-normal {
-  stroke: #42a5f5;
+.circle-progress.progress-normal {
+  stroke: #42a5f5 !important;
 }
-
-.progress-high {
-  stroke: #ffc107;
+.circle-progress.progress-high {
+  stroke: #ffc107 !important;
 }
-
-.progress-exceed {
-  stroke: #dc3545;
+.circle-progress.progress-exceed {
+  stroke: #dc3545 !important;
 }
 
 .circle-text {
