@@ -1,0 +1,509 @@
+.dashboard-container {
+  padding: 2rem 0;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.dashboard-content {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.calorie-card {
+  grid-column: 1;
+}
+
+.monthly-card {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+/* Calorie Circle Card */
+.calorie-circle {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 1rem;
+}
+
+.calorie-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #e0e0e0;
+  stroke-width: 4;
+}
+
+.circle-progress {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.5s ease;
+}
+
+.progress-low {
+  stroke: #28a745;
+}
+
+.progress-normal {
+  stroke: #42a5f5;
+}
+
+.progress-high {
+  stroke: #ffc107;
+}
+
+.progress-exceed {
+  stroke: #dc3545;
+}
+
+.circle-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.consumed {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.unit {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.calorie-info {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.calorie-info p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.text-danger {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.text-success {
+  color: #28a745;
+  font-weight: 600;
+}
+
+/* BMI Card */
+.bmi-display {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.bmi-value {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #42a5f5;
+  margin-bottom: 0.5rem;
+}
+
+.bmi-category {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.status-blue {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.status-green {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-orange {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-red {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.bmi-range {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+  color: #666;
+}
+
+.bmi-range p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Stats Card */
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.stat-item .label {
+  color: #666;
+  font-weight: 500;
+}
+
+.stat-item .value {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #42a5f5;
+}
+
+/* Monthly Card */
+.monthly-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.summary-item {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.summary-item .label {
+  display: block;
+  font-size: 0.85rem;
+  color: #999;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.summary-item .value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #42a5f5;
+}
+
+/* Mini Chart */
+.mini-chart {
+  margin-top: 2rem;
+}
+
+.chart-bars {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 250px;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.chart-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.chart-bar {
+  width: 100%;
+  background-color: #42a5f5;
+  border-radius: 4px 4px 0 0;
+  min-height: 20px;
+  max-width: 30px;
+  transition: all 0.3s;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(66, 165, 245, 0.2);
+}
+
+.chart-bar:hover {
+  opacity: 0.8;
+  box-shadow: 0 4px 8px rgba(66, 165, 245, 0.35);
+}
+
+.bar-label {
+  font-size: 0.75rem;
+  color: #999;
+  font-weight: 600;
+  text-align: center;
+  min-height: 1rem;
+}
+
+.chart-info {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+}
+
+/* Stats Card - Make clickable */
+.stats-card {
+  transition: all 0.3s;
+}
+
+.stats-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.stats-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+  text-align: center;
+  color: #42a5f5;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Empty Chart State */
+.empty-chart-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.empty-icon {
+  font-size: 3.5rem;
+  line-height: 1;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.empty-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.empty-description {
+  color: #666;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 380px;
+}
+
+.btn-add-meal {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.8rem;
+  background-color: #42a5f5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
+  margin-top: 0.5rem;
+}
+
+.btn-add-meal:hover {
+  background-color: #1976d2;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(66, 165, 245, 0.55);
+}
+
+.btn-add-meal:active {
+  transform: translateY(0px);
+  box-shadow: 0 2px 8px rgba(66, 165, 245, 0.4);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+.btn-text {
+  font-weight: 600;
+}
+
+/* Chart Title */
+.chart-title {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Line Chart Container */
+.line-chart-container {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.line-chart {
+  width: 100%;
+  height: auto;
+  min-height: 350px;
+  background: white;
+  border-radius: 4px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.line-chart text {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  user-select: none;
+}
+
+.line-chart .y-axis line {
+  stroke: #ddd;
+  stroke-width: 1;
+}
+
+.line-chart .y-axis text {
+  font-size: 11px;
+  fill: #999;
+}
+
+.line-chart .x-axis text {
+  font-size: 11px;
+  fill: #999;
+}
+
+/* Data Line */
+.line-chart .data-line {
+  stroke: #42a5f5;
+  filter: drop-shadow(0 1px 2px rgba(66, 165, 245, 0.2));
+}
+
+/* Data Points */
+.line-chart .data-point {
+  fill: #42a5f5;
+  stroke: white;
+  stroke-width: 2;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.line-chart .data-point:hover {
+  r: 6;
+  filter: drop-shadow(0 2px 4px rgba(66, 165, 245, 0.4));
+}
+
+/* Goal Line */
+.line-chart .goal-line {
+  filter: drop-shadow(0 1px 2px rgba(255, 193, 7, 0.2));
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .monthly-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .line-chart {
+    min-height: 250px;
+  }
+}

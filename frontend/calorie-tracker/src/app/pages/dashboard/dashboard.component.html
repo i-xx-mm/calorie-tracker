@@ -1,0 +1,147 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading dashboard...</p>
+  </div>
+
+  <div *ngIf="!loading && dashboardData" class="dashboard-content">
+    <div class="dashboard-grid">
+      <!-- Calorie Tracking Card -->
+      <div class="card calorie-card">
+        <h2>Today's Calorie Intake</h2>
+        <div class="calorie-circle">
+          <svg viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" class="circle-bg"></circle>
+            <circle 
+              cx="60" 
+              cy="60" 
+              r="54" 
+              [class]="'circle-progress ' + getCaloriePercentageClass((dashboardData.calorieTracking?.percentage || 0))"
+              [style.stroke-dasharray]="((dashboardData.calorieTracking?.percentage || 0) / 100 * 340) + ' 340'">
+            </circle>
+          </svg>
+          <div class="circle-text">
+            <div class="consumed">{{ dashboardData.calorieTracking?.consumed }}</div>
+            <div class="unit">kcal</div>
+          </div>
+        </div>
+        <div class="calorie-info">
+          <p><strong>Daily Goal:</strong> {{ dashboardData.calorieTracking?.suggestedDaily }} kcal</p>
+          <p><strong>Remaining:</strong> <span [class]="(dashboardData.calorieTracking?.remaining || 0) < 0 ? 'text-danger' : 'text-success'">
+            {{ dashboardData.calorieTracking?.remaining }} kcal
+          </span></p>
+          <p><strong>Progress:</strong> {{ dashboardData.calorieTracking?.percentage }}%</p>
+        </div>
+      </div>
+
+            <div class="card monthly-card">
+        <!-- Monthly Summary Card - No Data -->
+        <div *ngIf="!(monthlyStats?.dailyData?.length ?? 0)" class="empty-chart-state">
+          <div class="empty-icon">📊</div>
+          <h3 class="empty-title">No Data Yet</h3>
+          <p class="empty-description">Start logging your meals to see your monthly calorie intake trend and track your progress!</p>
+          <button class="btn-add-meal" (click)="goToFoodLog()">
+            <span class="btn-icon">➕</span>
+            <span class="btn-text">Add Your First Meal</span>
+          </button>
+        </div>
+
+        <!-- Monthly Summary Card - With Data -->
+        <div *ngIf="(monthlyStats?.dailyData?.length ?? 0) > 0">
+          <h2>Monthly Summary</h2>
+          <div class="monthly-summary">
+            <div class="summary-item">
+              <span class="label">Average Daily</span>
+              <span class="value">{{ monthlyStats?.summary?.averageDailyConsumption?.toFixed(0) }} kcal</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Highest Day</span>
+              <span class="value">{{ monthlyStats?.summary?.highestDayCalories }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Lowest Day</span>
+              <span class="value">{{ monthlyStats?.summary?.lowestDayCalories }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="label">Days Tracked</span>
+              <span class="value">{{ monthlyStats?.summary?.daysWithLogs }}</span>
+            </div>
+          </div>
+
+          <!-- Line Chart -->
+          <div class="line-chart-container">
+            <div class="chart-title">Calorie Intake Trend</div>
+            <svg class="line-chart" [attr.viewBox]="'0 0 ' + getChartWidth() + ' 300'">
+              <!-- Y-axis grid lines and labels -->
+              <g class="y-axis">
+                <line x1="50" y1="20" x2="50" y2="260" stroke="#999" stroke-width="1" />
+                <line x1="50" y1="260" x2="20" y2="260" stroke="#999" stroke-width="1" />
+                
+                <!-- Grid lines and Y labels -->
+                <ng-container *ngFor="let yLabel of getYAxisLabels()">
+                  <line [attr.x1]="50" [attr.y1]="getYPosition(yLabel)" [attr.x2]="getChartWidth() - 20" [attr.y2]="getYPosition(yLabel)" 
+                        stroke="#e9ecef" stroke-width="1" stroke-dasharray="2,2" />
+                  <text [attr.x]="40" [attr.y]="getYPosition(yLabel) + 5" text-anchor="end" font-size="11" fill="#999">
+                    {{ yLabel }}
+                  </text>
+                </ng-container>
+              </g>
+
+              <!-- Daily goal reference line -->
+              <line 
+                x1="50" 
+                [attr.y1]="getYPosition(getCurrentUserDailyGoal())" 
+                [attr.x2]="getChartWidth() - 20" 
+                [attr.y2]="getYPosition(getCurrentUserDailyGoal())" 
+                stroke="#ffc107" 
+                stroke-width="2" 
+                stroke-dasharray="5,5"
+                class="goal-line" />
+              <text x="55" [attr.y]="getYPosition(getCurrentUserDailyGoal()) - 5" font-size="10" fill="#ffc107" font-weight="600">
+                Daily Goal: {{ getCurrentUserDailyGoal() }} kcal
+              </text>
+
+              <!-- Calorie data line -->
+              <polyline 
+                [attr.points]="getLinePoints()" 
+                class="data-line"
+                fill="none" 
+                stroke="#667eea" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" />
+
+              <!-- Data points (circles) -->
+              <g class="data-points">
+                <circle *ngFor="let day of monthlyStats?.dailyData; let i = index" 
+                  [attr.cx]="getXPosition(i)" 
+                  [attr.cy]="getYPosition(day.totalCalories)"
+                  r="4"
+                  class="data-point"
+                  [title]="day.totalCalories + ' kcal on ' + day.date">
+                </circle>
+              </g>
+
+              <!-- X-axis dates -->
+              <g class="x-axis">
+                <ng-container *ngFor="let day of monthlyStats?.dailyData; let i = index">
+                  <text 
+                    [attr.x]="getXPosition(i)" 
+                    [attr.y]="280" 
+                    text-anchor="middle" 
+                    font-size="11" 
+                    fill="#999">
+                    {{ formatDateLabel(day.date) }}
+                  </text>
+                </ng-container>
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

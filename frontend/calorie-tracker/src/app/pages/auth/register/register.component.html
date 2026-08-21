@@ -1,0 +1,128 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Register</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username">Username <span class="required">*</span></label>
+        <input 
+          type="text" 
+          id="username" 
+          formControlName="username"
+          class="form-control"
+          [class.is-invalid]="registerForm.get('username')?.touched && registerForm.get('username')?.errors"
+          placeholder="Choose a username">
+        <div class="error-message" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors">
+          <span *ngIf="registerForm.get('username')?.errors?.['required']">Username is required</span>
+          <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="height">Height (cm) <span class="required">*</span></label>
+          <input 
+            type="number" 
+            id="height" 
+            formControlName="height"
+            class="form-control"
+            [class.is-invalid]="registerForm.get('height')?.touched && registerForm.get('height')?.errors"
+            placeholder="e.g., 170">
+          <div class="error-message" *ngIf="registerForm.get('height')?.touched && registerForm.get('height')?.errors">
+            <span *ngIf="registerForm.get('height')?.errors?.['required']">Height is required</span>
+            <span *ngIf="registerForm.get('height')?.errors?.['min'] || registerForm.get('height')?.errors?.['max']">Height must be between 50 and 300 cm</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="weight">Weight (kg) <span class="required">*</span></label>
+          <input 
+            type="number" 
+            id="weight" 
+            formControlName="weight"
+            class="form-control"
+            [class.is-invalid]="registerForm.get('weight')?.touched && registerForm.get('weight')?.errors"
+            placeholder="e.g., 70">
+          <div class="error-message" *ngIf="registerForm.get('weight')?.touched && registerForm.get('weight')?.errors">
+            <span *ngIf="registerForm.get('weight')?.errors?.['required']">Weight is required</span>
+            <span *ngIf="registerForm.get('weight')?.errors?.['min'] || registerForm.get('weight')?.errors?.['max']">Weight must be between 20 and 500 kg</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="age">Age <span class="required">*</span></label>
+          <input 
+            type="number" 
+            id="age" 
+            formControlName="age"
+            class="form-control"
+            [class.is-invalid]="registerForm.get('age')?.touched && registerForm.get('age')?.errors"
+            placeholder="e.g., 25">
+          <div class="error-message" *ngIf="registerForm.get('age')?.touched && registerForm.get('age')?.errors">
+            <span *ngIf="registerForm.get('age')?.errors?.['required']">Age is required</span>
+            <span *ngIf="registerForm.get('age')?.errors?.['min'] || registerForm.get('age')?.errors?.['max']">Age must be between 13 and 120</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender <span class="required">*</span></label>
+          <select 
+            id="gender" 
+            formControlName="gender"
+            class="form-control"
+            [class.is-invalid]="registerForm.get('gender')?.touched && registerForm.get('gender')?.errors">
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+          <div class="error-message" *ngIf="registerForm.get('gender')?.touched && registerForm.get('gender')?.errors">
+            <span *ngIf="registerForm.get('gender')?.errors?.['required']">Gender is required</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password <span class="required">*</span></label>
+        <input 
+          type="password" 
+          id="password" 
+          formControlName="password"
+          class="form-control"
+          [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.errors"
+          placeholder="At least 6 characters">
+        <div class="error-message" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors">
+          <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</span>
+          <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+        <input 
+          type="password" 
+          id="confirmPassword" 
+          formControlName="confirmPassword"
+          class="form-control"
+          [class.is-invalid]="registerForm.get('confirmPassword')?.touched && (registerForm.get('confirmPassword')?.errors || registerForm.errors?.['mismatch'])"
+          placeholder="Confirm your password">
+        <div class="error-message" *ngIf="registerForm.get('confirmPassword')?.touched && (registerForm.get('confirmPassword')?.errors || registerForm.errors?.['mismatch'])">
+          <span *ngIf="registerForm.errors?.['mismatch']">Passwords do not match</span>
+          <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="registerForm.invalid || loading">
+        {{ loading ? 'Registering...' : 'Register' }}
+      </button>
+    </form>
+
+    <p class="auth-link">
+      Already have an account? <a routerLink="/auth/login">Login here</a>
+    </p>
+  </div>
+</div>

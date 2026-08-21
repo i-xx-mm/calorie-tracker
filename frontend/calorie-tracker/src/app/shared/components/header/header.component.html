@@ -1,0 +1,62 @@
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <h1>Calorie Tracker</h1>
+      </div>
+      <nav class="nav" *ngIf="currentUser">
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/profile" routerLinkActive="active">Profile</a>
+        <a routerLink="/food-log" routerLinkActive="active">Food Log</a>
+      </nav>
+      <div class="user-menu">
+        <!-- User Avatar Dropdown -->
+        <div *ngIf="currentUser" class="avatar-dropdown">
+          <button class="avatar-button" (click)="toggleDropdown()" [style.--avatar-bg]="avatarColor" #avatarBtn>
+            <div class="avatar-circle">{{ currentUser.username?.charAt(0)?.toUpperCase() }}</div>
+          </button>
+          
+          <!-- Dropdown Menu with Pointer -->
+          <div class="dropdown-menu" *ngIf="showDropdown" [@slideDown]>
+            <div class="dropdown-pointer"></div>
+            
+            <div class="dropdown-header">
+              <span class="dropdown-username">{{ currentUser.username }}</span>
+            </div>
+            
+            <div class="dropdown-divider"></div>
+            
+            <div class="dropdown-section">
+              <span class="dropdown-label"><strong>Avatar Color</strong></span>
+              <div class="avatar-colors">
+                <button 
+                  *ngFor="let color of avatarColors" 
+                  class="color-option" 
+                  [style.--color]="color"
+                  [class.selected]="color === avatarColor"
+                  (click)="changeAvatarColor(color)"
+                  [title]="color">
+                </button>
+              </div>
+            </div>
+            
+            <div class="dropdown-divider"></div>
+            
+            <button class="dropdown-item logout-item" (click)="logout()">
+              <strong>Log Out</strong>
+            </button>
+          </div>
+          
+          <!-- Backdrop to close dropdown -->
+          <div class="dropdown-backdrop" *ngIf="showDropdown" (click)="closeDropdown()"></div>
+        </div>
+
+        <!-- Auth Links (when not logged in) -->
+        <div *ngIf="!currentUser" class="auth-links">
+          <a routerLink="/auth/login" class="link">Login</a>
+          <a routerLink="/auth/register" class="link">Register</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

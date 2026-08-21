@@ -1,0 +1,117 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading profile...</p>
+  </div>
+
+  <div *ngIf="!loading && currentUser" class="profile-content">
+    <div class="profile-grid">
+      <!-- BMI Card -->
+      <div class="card bmi-section">
+        <h2>BMI Calculator</h2>
+        <div class="bmi-display" *ngIf="bmi">
+          <div class="bmi-large">{{ bmi.toFixed(1) }}</div>
+          <div [class]="'bmi-status ' + getBMIStatusClass(bmiStatus)">
+            {{ bmiStatus }}
+          </div>
+          <div class="bmi-details">
+            <p><strong>Height:</strong> {{ currentUser.height }} cm</p>
+            <p><strong>Weight:</strong> {{ currentUser.currentWeight }} kg</p>
+            <p class="bmi-info">Healthy BMI Range: 18.5 - 24.9</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Form -->
+      <div class="card profile-form-section">
+        <h2>Edit Profile</h2>
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input 
+              type="text" 
+              id="username" 
+              formControlName="username"
+              class="form-control">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="height">Height (cm) <span class="required">*</span></label>
+              <input 
+                type="number" 
+                id="height" 
+                formControlName="height"
+                class="form-control"
+                [class.is-invalid]="profileForm.get('height')?.touched && profileForm.get('height')?.errors"
+                placeholder="e.g., 170">
+              <div class="error-message" *ngIf="profileForm.get('height')?.touched && profileForm.get('height')?.errors">
+                <span *ngIf="profileForm.get('height')?.errors?.['required']">Height is required</span>
+                <span *ngIf="profileForm.get('height')?.errors?.['min'] || profileForm.get('height')?.errors?.['max']">Height must be between 50 and 300 cm</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="weight">Weight (kg) <span class="required">*</span></label>
+              <input 
+                type="number" 
+                id="weight" 
+                formControlName="weight"
+                class="form-control"
+                [class.is-invalid]="profileForm.get('weight')?.touched && profileForm.get('weight')?.errors"
+                placeholder="e.g., 70">
+              <div class="error-message" *ngIf="profileForm.get('weight')?.touched && profileForm.get('weight')?.errors">
+                <span *ngIf="profileForm.get('weight')?.errors?.['required']">Weight is required</span>
+                <span *ngIf="profileForm.get('weight')?.errors?.['min'] || profileForm.get('weight')?.errors?.['max']">Weight must be between 20 and 500 kg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="age">Age <span class="required">*</span></label>
+              <input 
+                type="number" 
+                id="age" 
+                formControlName="age"
+                class="form-control"
+                [class.is-invalid]="profileForm.get('age')?.touched && profileForm.get('age')?.errors"
+                placeholder="e.g., 25">
+              <div class="error-message" *ngIf="profileForm.get('age')?.touched && profileForm.get('age')?.errors">
+                <span *ngIf="profileForm.get('age')?.errors?.['required']">Age is required</span>
+                <span *ngIf="profileForm.get('age')?.errors?.['min'] || profileForm.get('age')?.errors?.['max']">Age must be between 13 and 120</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="gender">Gender <span class="required">*</span></label>
+              <select 
+                id="gender" 
+                formControlName="gender"
+                class="form-control"
+                [class.is-invalid]="profileForm.get('gender')?.touched && profileForm.get('gender')?.errors">
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              <div class="error-message" *ngIf="profileForm.get('gender')?.touched && profileForm.get('gender')?.errors">
+                <span *ngIf="profileForm.get('gender')?.errors?.['required']">Gender is required</span>
+              </div>
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="profileForm.invalid || saving">
+            {{ saving ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

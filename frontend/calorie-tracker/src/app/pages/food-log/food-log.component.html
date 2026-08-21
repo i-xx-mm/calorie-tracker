@@ -1,0 +1,160 @@
+<div class="food-log-container">
+  <div class="food-log-header">
+    <h1>Food Log</h1>
+    <p class="today-date">{{ getTodayDateFormatted() }}</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading food log...</p>
+  </div>
+
+  <div *ngIf="!loading" class="food-log-content">
+    <!-- Food Entry Form -->
+    <div class="card add-food-card">
+      <h2>{{ editing ? 'Edit Food Entry' : 'Add Food Entry' }}</h2>
+      <form [formGroup]="foodLogForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="foodSearch">Food Name <span class="required">*</span></label>
+          <div class="search-container">
+            <input 
+              type="text" 
+              id="foodSearch" 
+              formControlName="foodSearch"
+              class="form-control"
+              [class.is-invalid]="foodLogForm.get('foodSearch')?.touched && foodLogForm.get('foodSearch')?.errors"
+              placeholder="Search for food..."
+              (input)="onFoodSearch($event)"
+              (focus)="showSearchResults = searchResults.length > 0">
+            <button 
+              type="button"
+              class="btn-clear-search"
+              *ngIf="foodLogForm.get('foodSearch')?.value"
+              (click)="clearFoodSearch()"
+              title="Clear search">
+              ✕
+            </button>
+            <div *ngIf="searching" class="searching">Searching...</div>
+          </div>
+          
+          <!-- Search Results Dropdown -->
+          <div class="search-results" *ngIf="showSearchResults && searchResults.length > 0">
+            <div *ngFor="let food of searchResults" 
+                 class="result-item"
+                 (click)="selectFood(food)">
+              <div class="result-header">
+                <span class="result-name">{{ food.name | capitalize }}</span>
+                <span class="result-calorie">{{ food.calorie }} kcal</span>
+              </div>
+              <div class="result-note" *ngIf="food.note">{{ food.note }}</div>
+            </div>
+          </div>
+
+          <div class="error-message" *ngIf="foodLogForm.get('foodSearch')?.touched && foodLogForm.get('foodSearch')?.errors">
+            <span *ngIf="foodLogForm.get('foodSearch')?.errors?.['required']">Food name is required</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="calorie">Calorie<span class="required">*</span></label>
+            <input 
+              type="number" 
+              id="calorie" 
+              formControlName="calorie"
+              class="form-control"
+              [class.is-invalid]="foodLogForm.get('calorie')?.touched && foodLogForm.get('calorie')?.errors"
+              placeholder="0">
+            <div class="error-message" *ngIf="foodLogForm.get('calorie')?.touched && foodLogForm.get('calorie')?.errors">
+              <span *ngIf="foodLogForm.get('calorie')?.errors?.['required']">Calorie is required</span>
+              <span *ngIf="foodLogForm.get('calorie')?.errors?.['min']">Calorie must be at least 1</span>
+              <span *ngIf="foodLogForm.get('calorie')?.errors?.['max']">Calorie cannot exceed 10000</span>
+              <span *ngIf="foodLogForm.get('calorie')?.errors?.['negativeNumber']">Calorie cannot be negative</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="note">Note (optional)</label>
+            <input 
+              type="text" 
+              id="note" 
+              formControlName="note"
+              class="form-control"
+              placeholder="e.g., medium sized">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary"
+            [disabled]="foodLogForm.invalid || submitting">
+            {{ submitting ? 'Saving...' : (editing ? 'Update Entry' : 'Add Entry') }}
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-secondary"
+            *ngIf="editing"
+            (click)="cancelEdit()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Food Log List -->
+    <div class="card food-list-card" *ngIf="currentFoodLog">
+      <div class="list-header">
+        <h2>Today's Meals</h2>
+        <div class="total-calorie">
+          Total: <strong>{{ getTotalCalories() }} kcal</strong>
+        </div>
+      </div>
+
+      <div *ngIf="(currentFoodLog.foods?.length || 0) === 0" class="empty-state">
+        <p>No food entries yet. Add your first meal above!</p>
+      </div>
+
+      <div *ngIf="(currentFoodLog.foods?.length || 0) > 0" class="food-items">
+        <div *ngFor="let food of currentFoodLog.foods; let i = index" class="food-item">
+          <div class="food-info">
+            <div class="food-name">{{ food.name | capitalize }}</div>
+            <div *ngIf="food.note" class="food-note">{{ food.note }}</div>
+          </div>
+          <div class="food-calorie">{{ food.calorie }} kcal</div>
+          <div class="food-actions">
+            <button class="btn-icon edit" (click)="editEntry(i)" title="Edit" type="button">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="btn-icon delete" (click)="deleteEntry(i)" title="Delete" type="button">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Food Modal -->
+    <app-edit-food-modal
+      [isOpen]="showEditModal"
+      [foodItem]="editingFood"
+      (save)="onEditSave($event)"
+      (close)="onEditCancel()">
+    </app-edit-food-modal>
+
+    <!-- Delete Confirm Modal -->
+    <app-delete-confirm-modal
+      [isOpen]="showDeleteModal"
+      [foodItem]="deletingFood"
+      (confirm)="onDeleteConfirm()"
+      (close)="onDeleteCancel()">
+    </app-delete-confirm-modal>
+
+    <!-- Empty Log State -->
+    <div class="card food-list-card" *ngIf="!currentFoodLog">
+      <h2>Today's Meals</h2>
+      <div class="empty-state">
+        <p>No food log created yet. Add your first meal to get started!</p>
+      </div>
+    </div>
+  </div>
+</div>
