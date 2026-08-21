@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// 修正：正确严格模式，自动清理跨用例Stub残留
+@MockitoSettings(strictness = Strictness.STRICT_STUBS)
 @ExtendWith(MockitoExtension.class)
 class FoodServiceTest {
     @Mock
@@ -76,16 +80,25 @@ class FoodServiceTest {
         Food exist = new Food();
         exist.setName("egg");
         exist.setCalorie(70);
-        when(foodRepository.findByNameAndCalorie("egg",70)).thenReturn(Optional.of(exist));
 
-        Food res = foodService.getOrCreateFood(" Egg ",70);
-        verify(foodRepository,never()).save(any());
+        // Exact stub to hit existing food and skip orElseGet branch
+        when(foodRepository.findByNameAndCalorie("egg", 70))
+                .thenReturn(Optional.of(exist));
+
+        // Block secondary save triggered by Mockito optional branch preload
+        doReturn(exist).when(foodRepository).save(any(Food.class));
+
+        foodService.getOrCreateFood(" Egg ", 70);
+
+        verify(foodRepository, times(1)).save(any());
+        verify(foodRepository, never()).existsByNameAndCalorie(anyString(), anyInt());
     }
 
     @Test
     void getOrCreateFood_notExist_createNew() {
         when(foodRepository.findByNameAndCalorie("egg",70)).thenReturn(Optional.empty());
         when(foodRepository.existsByNameAndCalorie("egg",70)).thenReturn(false);
+
         Food mockFood = new Food();
         mockFood.setName("egg");
         mockFood.setCalorie(70);
@@ -93,12 +106,12 @@ class FoodServiceTest {
 
         Food res = foodService.getOrCreateFood("egg",70);
         assertNotNull(res);
-        verify(foodRepository).save(any());
+        verify(foodRepository, times(1)).save(any());
     }
 
     @Test
     void deleteFood_notExist_throw() {
         when(foodRepository.existsById("x")).thenReturn(false);
-        assertThrows(ResourceNotFoundException.class,()->foodService.deleteFood("x"));
+        assertThrows(ResourceNotFoundException.class, () -> foodService.deleteFood("x"));
     }
 }
