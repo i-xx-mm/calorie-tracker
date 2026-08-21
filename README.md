@@ -29,7 +29,7 @@ Calorie Tracker is a full‑stack web application for users to log daily food in
 - Register Page
 ![register](screenshots/register.png)
 
-- User Profile page, update personal goal and BMI info
+- User Profile page, update personal physical metrics and BMI info
 ![profile](screenshots/profile.png)
 
 - Profile with avatar upload feature
