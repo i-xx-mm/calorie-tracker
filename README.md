@@ -1,10 +1,39 @@
 # Calorie Tracker: Full-Stack Web Application
 
-# Calorie-Tracker
+## Project Overview
+Calorie Tracker is a full‑stack web application for users to log daily food intake, track calorie consumption, view visual progress dashboard, get food input suggestions, and manage personal profile settings.
 
-A modern full-stack web application for tracking daily calorie intake, including user authentication, BMI calculation, and monthly intake analytics\.
+## Screenshots
 
+### Core Pages
+- **Dashboard**: Real‑time calorie progress circular indicator, shows consumed / remaining calories and trend chart
+![dashboard](screenshots/dashboard.png)
 
+- **Food Log**: Add and view daily food entries
+![food_log](screenshots/food_log.png)
+
+- **Food Suggestion**: Auto‑suggest frequently‑eaten food items when typing
+![food_suggestion](screenshots/food_suggestion.png)
+
+### Over‑consumption UI states
+- High daily intake (100‑149% target): yellow progress ring
+![high_daily](screenshots/high_daily.png)
+
+- Very high daily intake (>=150% target): red warning progress ring
+![very_high_daily](screenshots/very_high_daily.png)
+
+### Auth & Profile
+- Login Page
+![login](screenshots/login.png)
+
+- Register Page
+![register](screenshots/register.png)
+
+- User Profile page, update personal goal and BMI info
+![profile](screenshots/profile.png)
+
+- Profile with avatar upload feature
+![profile_avatar](screenshots/profile_avatar.png)
 ---
 
 ## Table of Contents
