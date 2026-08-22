@@ -14,22 +14,6 @@ export class FoodService {
     return this.apiService.get<Food[]>(`/foods?search=${search}&limit=${limit}`);
   }
 
-  getFoodById(id: string): Observable<Food> {
-    return this.apiService.get<Food>(`/foods/${id}`);
-  }
-
-  createFood(food: Omit<Food, 'id'>): Observable<Food> {
-    return this.apiService.post<Food>('/foods', food);
-  }
-
-  updateFood(id: string, food: Partial<Food>): Observable<Food> {
-    return this.apiService.put<Food>(`/foods/${id}`, food);
-  }
-
-  deleteFood(id: string): Observable<void> {
-    return this.apiService.delete<void>(`/foods/${id}`);
-  }
-
   // Food Log Operations
   getFoodLogByDate(date: string): Observable<FoodLog> {
     return this.apiService.get<FoodLog>(`/foodlogs?date=${date}`);

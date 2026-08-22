@@ -165,14 +165,19 @@ mongosh --eval "db.adminCommand('ping')"
 
 ```bash
 # Windows
-Option 1:
-- Press `Win + R`, type `services.msc`, press Enter to open Service window
-- Locate services named MongoDB
-- Right-click `Start` (If it's already Running, left it as-is)
+# Option 1:
+> Press `Win + R`, type `services.msc`, press Enter to open Service window
+> Locate services named MongoDB
+> Right-click `Start`, if it\'s already Running, left it as-is\)/
 
-Option 2:
-- Run PowerShell/Terminal as Administrator
-> net start MongoDB
+# Option 2:
+# Run PowerShell/Terminal as Administrator
+net start MongoDB
+
+# Open a new regular terminal and verify connection
+mongosh --eval "db.adminCommand('ping')"
+
+> If ping returns `ok: 1`, MongoDB is running successfully on port `27017`
 ```
 
 ### 2\. Start Backend \(Terminal 1\)

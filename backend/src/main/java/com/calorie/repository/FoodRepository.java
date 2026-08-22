@@ -14,6 +14,4 @@ public interface FoodRepository extends MongoRepository<Food, String> {
     List<Food> searchByName(String name);
 
     Optional<Food> findByNameAndCalorie(String name, Integer calorie);
-
-    boolean existsByNameAndCalorie(String name, Integer calorie);
 }

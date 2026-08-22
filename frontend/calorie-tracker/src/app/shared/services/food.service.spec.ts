@@ -34,32 +34,6 @@ describe('FoodService', () => {
     expect(apiService.get).toHaveBeenCalledWith('/foods?search=apple&limit=15');
   });
 
-  it('getFoodById calls GET with food id', () => {
-    apiService.get.and.returnValue(of({} as Food));
-    service.getFoodById('food‑001').subscribe();
-    expect(apiService.get).toHaveBeenCalledWith('/foods/food‑001');
-  });
-
-  it('createFood calls POST with payload', () => {
-    const input = { name: 'banana', calorie: 90 };
-    apiService.post.and.returnValue(of({} as Food));
-    service.createFood(input).subscribe();
-    expect(apiService.post).toHaveBeenCalledWith('/foods', input);
-  });
-
-  it('updateFood calls PUT with id and partial food', () => {
-    const updatePayload = { calorie: 95 };
-    apiService.put.and.returnValue(of({} as Food));
-    service.updateFood('food‑001', updatePayload).subscribe();
-    expect(apiService.put).toHaveBeenCalledWith('/foods/food‑001', updatePayload);
-  });
-
-  it('deleteFood calls DELETE on foods/:id', () => {
-    apiService.delete.and.returnValue(of(void 0));
-    service.deleteFood('food‑001').subscribe();
-    expect(apiService.delete).toHaveBeenCalledWith('/foods/food‑001');
-  });
-
   it('getFoodLogByDate appends date query param', () => {
     apiService.get.and.returnValue(of({} as FoodLog));
     service.getFoodLogByDate('2026‑08‑21').subscribe();
