@@ -32,7 +32,7 @@ Calorie Tracker is a full‑stack web application for users to log daily food in
 - User Profile page, update personal physical metrics and BMI info
 ![profile](screenshots/profile.png)
 
-- Profile with avatar upload feature
+- Profile with avatar background color change feature
 ![profile_avatar](screenshots/profile_avatar.png)
 ---
 
@@ -94,8 +94,9 @@ node --version
 npm --version
 
 # MongoDB Community (local instance)
-# macOS: brew install mongodb-community
-# Windows: install MongoDB Community locally
+macOS: brew install mongodb-community
+Windows: install MongoDB Community locally
+> During installation, keep **Install MongoDB as a Service** checked (default). This registers MongoDB as a background Windows service.
 
 # Maven 3.8+
 mvn --version
@@ -160,6 +161,18 @@ brew services start mongodb-community
 
 # Verify MongoDB is running locally on 27017
 mongosh --eval "db.adminCommand('ping')"
+```
+
+```bash
+# Windows
+Option 1:
+- Press `Win + R`, type `services.msc`, press Enter to open Service window
+- Locate services named MongoDB
+- Right-click `Start` (If it's already Running, left it as-is)
+
+Option 2:
+- Run PowerShell/Terminal as Administrator
+> net start MongoDB
 ```
 
 ### 2\. Start Backend \(Terminal 1\)
@@ -306,26 +319,6 @@ GET  /api/users/{username}/bmi
 # Search foods (fuzzy search + result limit)
 # Query Params: search (string), limit (number, default=10)
 GET /api/foods?search=chicken&limit=10
-
-# Get single food by ID
-GET /api/foods/{id}
-
-# Create custom food (name + calorie only)
-POST /api/foods
-{
-  "name": "salmon",
-  "calorie": 280
-}
-
-# Update existing food
-PUT /api/foods/{id}
-{
-  "name": "salmon",
-  "calorie": 285
-}
-
-# Delete food
-DELETE /api/foods/{id}
 ```
 
 ### Food Log API
@@ -334,7 +327,7 @@ DELETE /api/foods/{id}
 # Get daily food log (date optional, defaults to today EST)
 GET /api/foodlogs?date=2026-08-21
 
-# Add new food entry to daily log
+# Add new food entry to daily log (note is optional, user memo only)
 POST /api/foodlogs
 {
   "foodName": "salmon",
