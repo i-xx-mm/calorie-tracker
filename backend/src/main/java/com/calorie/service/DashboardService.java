@@ -56,7 +56,6 @@ public class DashboardService {
                 .build();
 
         Optional<FoodLog> optionalFoodLog = foodLogService.getFoodLogByDate(username, today);
-        Map<String, Integer> caloriesByMeal = new HashMap<>();
 
         return DashboardDto.builder()
                 .username(username)
@@ -64,7 +63,6 @@ public class DashboardService {
                 .calorieTracking(calorieTracking)
                 .bmi(bmiInfo)
                 .foodsLogged(optionalFoodLog.map(log ->log.getFoods().size()).orElse(0))
-                .caloriesByMeal(caloriesByMeal)
                 .build();
     }
 

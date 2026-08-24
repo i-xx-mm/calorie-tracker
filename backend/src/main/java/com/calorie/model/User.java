@@ -10,28 +10,58 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+/**
+ * MongoDB document for User
+ * Stores User personal profile metadata
+ * Separate from credential entity Account, holds physical metrics for calorie calculation
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Document(collection = "user")
 public class User {
+    /**
+     * MongoDB document unique identifier
+     */
     @Id
     private String id;
 
+    /**
+     * Unique username linked to Account
+     */
     @Indexed(unique = true)
     private String username;
 
+    /**
+     * User age in full years
+     */
     private Integer age;
 
-    private Integer height; // in cm
+    /**
+     * User height in cm
+     */
+    private Integer height;
 
-    private String gender; // M or F
+    /**
+     * User gender, female/male/other
+     */
+    private String gender;
 
-    private Double currentWeight; // in kg
+    /**
+     * User current weight in kg
+     */
+    private Double currentWeight;
 
+    /**
+     * Timestamp when this profile document was created
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * Timestamp of last profile modification
+     * Defaults to object instantiation time
+     */
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -39,6 +69,7 @@ public class User {
      * Calculate daily calorie goal (TDEE) using Mifflin-St Jeor formula
      * Formula: BMR × Activity Level (1.55 for moderate activity)
      * Returns 2000 if height, weight, age, or gender not set
+     * Enforce minimal safe daily intake 1200 kcal for final output
      */
     public Integer calculateGoalCalories() {
         if (height == null || currentWeight == null || age == null || gender == null) {

@@ -16,12 +16,26 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * FoodLog REST controller
+ * Create, read, update, delete operations for user daily food consumption records
+ * All operations are user-scoped via authenticated username from JWT
+ */
 @RestController
 @RequestMapping("/api/foodlogs")
 @RequiredArgsConstructor
 public class FoodLogController {
     private final FoodLogService foodLogService;
 
+    /**
+     * Fetch daily food log for target date. Uses today EST if date parameter omitted
+     * Returns empty food list when no log document exists for given date
+     *
+     * @param date ISO local date string, optional
+     * @param authentication spring security authentication holding logged‑in username
+     * @return FoodLogDto containing food item list and total calorie
+     * Example: GET /api/foodlogs?date=2026-08-22
+     */
     @GetMapping
     public ResponseEntity<FoodLogDto> getFoodLog(
             @RequestParam(required = false) String date,
@@ -52,6 +66,23 @@ public class FoodLogController {
         return ResponseEntity.ok(dto);
     }
 
+    /**
+     * Append one food entry to daily food log
+     * Triggers getOrCreateFood to maintain cached Food collection
+     *
+     * @param request validated payload containing foodName, calorie, note and target date
+     * @param authentication Spring security authentication holding logged‑in username
+     * @return updated FoodLogDto with 201 Created status
+     * Example:
+     * POST /api/foodlogs
+     * Request Body:
+     * {
+     *   "foodName":"oatmeal",
+     *   "calorie":280,
+     *   "note":"with milk",
+     *   "date":"2026-08-22"
+     * }
+     */
     @PostMapping
     public ResponseEntity<FoodLogDto> addFoodEntry(
             @Valid @RequestBody AddFoodLogRequest request,
@@ -74,6 +105,24 @@ public class FoodLogController {
                 .body(dto);
     }
 
+    /**
+     * Modify an existing food entry inside daily log by list index
+     *
+     * @param foodLogId MongoDB document id of target food log
+     * @param index zero‑based position of FoodItem inside foods list to update
+     * @param request updated food payload
+     * @param authentication Spring security authentication holding logged‑in username
+     * @return refreshed FoodLogDto after modification
+     * Example:
+     * PUT /api/foodlogs/66abc123def?index=0
+     * Request Body:
+     * {
+     *   "foodName":"oatmeal",
+     *   "calorie":320,
+     *   "note":"extra blueberry",
+     *   "date":"2026-08-22"
+     * }
+     */
     @PutMapping("/{foodLogId}")
     public ResponseEntity<FoodLogDto> updateFoodEntry(
             @PathVariable String foodLogId,
@@ -97,6 +146,16 @@ public class FoodLogController {
         return ResponseEntity.ok(dto);
     }
 
+    /**
+     * Remove single food entry from log by list index
+     * Operates against today's EST food‑log document
+     *
+     * @param foodLogId MongoDB document id of target food log
+     * @param index zero‑based position of FoodItem to delete
+     * @param authentication spring security authentication holding logged-in username
+     * @return refreshed FoodLogDto after deletion
+     * Example: DELETE /api/foodlogs/66abc123def?index=0
+     */
     @DeleteMapping("/{foodLogId}")
     public ResponseEntity<FoodLogDto> deleteFoodEntry(
             @PathVariable String foodLogId,

@@ -1,16 +1,18 @@
 package com.calorie.controller;
 
-import com.calorie.dto.FoodRequest;
 import com.calorie.model.Food;
 import com.calorie.service.FoodService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Food REST controller
+ * Provides search capability for auto-complete dropdown on frontend
+ * Food documents are auto-created by getOrCreateFood when adding FoodLog entries
+ */
 @RestController
 @RequestMapping("/api/foods")
 @RequiredArgsConstructor
@@ -18,10 +20,11 @@ public class FoodController {
     private final FoodService foodService;
 
     /**
-     * Search foods by name
-     * @param search the name of the food to search for, required
-     * @param limit max number of results to return, optional
+     * Search foods by normalized food name
+     * @param search the name of the food to search for, empty string returns all records
+     * @param limit maximum number of items returned, default = 10
      * @return list of Food
+     * Example: GET /api/foods?search=apple&limit=5
      */
     @GetMapping
     public ResponseEntity<List<Food>> searchFoods(

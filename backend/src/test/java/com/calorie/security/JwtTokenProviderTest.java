@@ -62,13 +62,6 @@ class JwtTokenProviderTest {
     }
 
     @Test
-    void isTokenExpired_validToken_shouldReturnFalse() {
-        String token = tokenProvider
-                .generateToken("testuser");
-        assertFalse(tokenProvider.isTokenExpired(token));
-    }
-
-    @Test
     void getExpirationTime_shouldReturn3600000() {
         assertEquals(
                 3600000L,

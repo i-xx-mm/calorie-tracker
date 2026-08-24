@@ -1,12 +1,9 @@
 package com.calorie.controller;
 
-import com.calorie.dto.FoodRequest;
 import com.calorie.model.Food;
 import com.calorie.service.FoodService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 

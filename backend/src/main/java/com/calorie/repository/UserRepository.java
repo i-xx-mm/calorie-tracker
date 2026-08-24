@@ -6,9 +6,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * MongoDB repository for User document
+ * Handles user profile data access operations
+ */
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
+    /**
+     * Find user profile document by username
+     * @param username target username
+     * @return Optional User profile, empty if not present
+     */
     Optional<User> findByUsername(String username);
-
-    boolean existsByUsername(String username);
 }
