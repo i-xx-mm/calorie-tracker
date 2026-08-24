@@ -29,7 +29,6 @@ export class AppComponent implements OnInit {
         JSON.parse(user);
       }
     } catch (error) {
-      console.warn('Corrupted localStorage detected, clearing...');
       localStorage.clear();
     }
   }

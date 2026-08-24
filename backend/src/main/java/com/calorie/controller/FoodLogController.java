@@ -13,6 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/foodlogs")
@@ -26,17 +28,27 @@ public class FoodLogController {
             Authentication authentication) {
         String username = authentication.getName();
         LocalDate logDate = date != null ? LocalDate.parse(date) : DateTimeUtil.getTodayEST();
-        FoodLog foodLog = foodLogService.getFoodLogByDate(username, logDate);
+        Optional<FoodLog> optionalFoodLog = foodLogService.getFoodLogByDate(username, logDate);
         Integer totalCalories = foodLogService.getTotalCaloriesForDate(username, logDate);
+        FoodLogDto dto;
+        if (optionalFoodLog.isPresent()) {
+            FoodLog foodLog = optionalFoodLog.get();
+            dto = FoodLogDto.builder()
+                    .id(foodLog.getId())
+                    .username(foodLog.getUsername())
+                    .date(DateTimeUtil.utcLocalDateTimeToEstLocalDate(foodLog.getDate()))
+                    .foods(foodLog.getFoods())
+                    .totalCalories(totalCalories)
+                    .build();
 
-        FoodLogDto dto = FoodLogDto.builder()
-                .id(foodLog.getId())
-                .username(foodLog.getUsername())
-                .date(DateTimeUtil.utcLocalDateTimeToEstLocalDate(foodLog.getDate()))
-                .foods(foodLog.getFoods())
-                .totalCalories(totalCalories)
-                .build();
-
+        } else {
+            dto = FoodLogDto.builder()
+                    .username(username)
+                    .date(logDate)
+                    .foods(List.of())
+                    .totalCalories(totalCalories)
+                    .build();
+        }
         return ResponseEntity.ok(dto);
     }
 

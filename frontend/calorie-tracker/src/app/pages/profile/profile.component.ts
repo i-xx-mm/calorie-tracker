@@ -58,7 +58,6 @@ export class ProfileComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error loading profile:', error);
         this.notificationService.error('Failed to load profile');
         this.loading = false;
       }
@@ -130,7 +129,6 @@ export class ProfileComponent implements OnInit {
       },
       error: (error) => {
         this.saving = false;
-        console.error('Error updating profile:', error);
         this.notificationService.error(error.error?.message || 'Failed to update profile');
       }
     });

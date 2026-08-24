@@ -38,7 +38,7 @@ public class UserProfileDto {
 
     /**
      * Calculated daily calorie goal (TDEE) based on user's metrics
-     * Uses Mifflin‑St Jeor formula: BMR × 1.55 (moderate activity level)
+     * Uses Mifflin-St Jeor formula: BMR × 1.55 (moderate activity level)
      * 2000 if height, weight, age, or gender not set
      */
     private Integer goalCalories;

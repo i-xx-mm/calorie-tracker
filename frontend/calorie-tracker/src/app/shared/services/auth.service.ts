@@ -66,7 +66,6 @@ export class AuthService {
       return user ? JSON.parse(user) : null;
     } catch (error) {
       // Handle corrupted JSON in localStorage
-      console.warn('Corrupted user data in localStorage, clearing...');
       localStorage.removeItem('currentUser');
       localStorage.removeItem(environment.jwtTokenKey);
       return null;

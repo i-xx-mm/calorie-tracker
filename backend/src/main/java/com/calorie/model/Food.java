@@ -27,7 +27,7 @@ public class Food {
 
     /**
      * TTL index: expire document AT this stored timestamp.
-     * Application updates expireAt on each food usage to implement "30‑day inactivity".
+     * Application updates expireAt on each food usage to implement "30-day inactivity".
      */
     @Indexed
     private LocalDateTime expireAt;

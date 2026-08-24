@@ -36,7 +36,7 @@ public class User {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     /**
-     * Calculate daily calorie goal (TDEE) using Mifflin‑St Jeor formula
+     * Calculate daily calorie goal (TDEE) using Mifflin-St Jeor formula
      * Formula: BMR × Activity Level (1.55 for moderate activity)
      * Returns 2000 if height, weight, age, or gender not set
      */
@@ -45,7 +45,7 @@ public class User {
             // standard adult daily calorie recommendation
             return 2000;
         }
-        // Mifflin‑St Jeor formula for BMR
+        // Mifflin-St Jeor formula for BMR
         double bmr;
         if ("male".equalsIgnoreCase(gender)) {
             bmr = 10 * currentWeight + 6.25 * height - 5 * age + 5;

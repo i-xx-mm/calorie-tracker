@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Authentication service handling user registration and login\
+ * Manages account creation, password hashing, user profile initialization, and JWT token issuance
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
+    /**
+     * Register new user account
+     * Creates credential Account entity and corresponding health-profile User entity
+     * Password will be encoded before persistence. Returns signed JWT upon successful registration
+     *
+     * @param request registration payload contain username, password, and user health metrics
+     * @return AuthResponse with JWT token, username, and token expiration value
+     * @throws ConflictException if requested username already exists in database
+     */
     public AuthResponse register(RegisterRequest request) {
         // Check if username already exists
         if (accountRepository.existsByUsername(request.getUsername())) {
@@ -63,6 +76,14 @@ public class AuthService {
                 .build();
     }
 
+    /**
+     * Authenticate existing user by username and password
+     * Validates credentials against stored hashed password, return JWT token for subsequent request
+     *
+     * @param request login payload with username and password
+     * @return AuthResponse with JWT token, username, and token expiration value
+     * @throws UnauthorizedException when username cannot be found or password mismatch
+     */
     public AuthResponse login(LoginRequest request) {
         Account account = accountRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UnauthorizedException("Invalid username or password"));

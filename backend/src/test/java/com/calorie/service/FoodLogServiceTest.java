@@ -1,6 +1,7 @@
 package com.calorie.service;
 
 import com.calorie.exception.ResourceNotFoundException;
+import com.calorie.model.Food;
 import com.calorie.model.FoodItem;
 import com.calorie.model.FoodLog;
 import com.calorie.repository.FoodLogRepository;
@@ -33,11 +34,23 @@ class FoodLogServiceTest {
         LocalDate testDay = LocalDate.of(2026,8,20);
         when(foodLogRepository.findLogByUsernameAndEstDay(anyString(), any(), any())).thenReturn(Optional.empty());
 
-        FoodLog log = foodLogService.getFoodLogByDate("test1", testDay);
+        Optional<FoodLog> optionalFoodLog = foodLogService.getFoodLogByDate("test1", testDay);
 
-        assertNotNull(log);
-        assertEquals("test1", log.getUsername());
-        assertTrue(log.getFoods().isEmpty());
+        assertTrue(optionalFoodLog.isEmpty());
+    }
+
+    void getFoodLogByDate_exists_returnFoodLog() {
+        LocalDate testDay = LocalDate.of(2026,8,20);
+        FoodLog mockLog = new FoodLog();
+        mockLog.setUsername("test1");
+
+        when(foodLogRepository.findLogByUsernameAndEstDay(anyString(), any(), any()))
+                .thenReturn(Optional.of(mockLog));
+
+        Optional<FoodLog> optionalFoodLog = foodLogService.getFoodLogByDate("test1", testDay);
+
+        assertTrue(optionalFoodLog.isPresent());
+        assertEquals("test1", optionalFoodLog.get().getUsername());
     }
 
     @Test

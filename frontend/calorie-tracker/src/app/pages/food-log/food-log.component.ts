@@ -95,8 +95,6 @@ export class FoodLogComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         this.loading = false;
-        console.error('Error loading food log:', error);
-        // If no food log exists for today, that's ok, it will be created on first entry
       }
     });
   }
@@ -249,13 +247,11 @@ export class FoodLogComponent implements OnInit, OnDestroy {
               this.notificationService.success('Food entry updated');
             },
             error: (error) => {
-              console.error('Error adding new entry:', error);
               this.notificationService.error('Failed to update entry');
             }
           });
         },
         error: (error) => {
-          console.error('Error deleting old entry:', error);
           this.notificationService.error('Failed to update entry');
         }
       });
@@ -276,7 +272,6 @@ export class FoodLogComponent implements OnInit, OnDestroy {
           this.notificationService.success('Food entry updated');
         },
         error: (error) => {
-          console.error('Error updating entry:', error);
           this.notificationService.error('Failed to update entry');
         }
       });
@@ -312,7 +307,6 @@ export class FoodLogComponent implements OnInit, OnDestroy {
         this.notificationService.success('Food entry deleted');
       },
       error: (error) => {
-        console.error('Error deleting entry:', error);
         this.notificationService.error('Failed to delete entry');
       }
     });

@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,7 +28,6 @@ class DashboardServiceTest {
 
     @Test
     void getTodayDashboard_calculateCorrectPercentage() {
-        // any(LocalDate.class) 匹配service内部LocalDate.now()出来的任意日期
         when(foodLogService.getTotalCaloriesForDate(anyString(), any(LocalDate.class))).thenReturn(900);
         when(userService.getGoalCalories("test1")).thenReturn(1800);
 
@@ -37,7 +37,8 @@ class DashboardServiceTest {
         bmiResp.setStatus("Healthy");
         when(userService.calculateBMI("test1")).thenReturn(bmiResp);
 
-        when(foodLogService.getFoodLogByDate(anyString(), any(LocalDate.class))).thenReturn(mockLog());
+        when(foodLogService.getFoodLogByDate(anyString(), any(LocalDate.class)))
+                .thenReturn(Optional.of(mockLog()));
 
         DashboardDto dto = dashboardService.getTodayDashboard("test1");
         assertEquals(900, dto.getCalorieTracking().getConsumed());

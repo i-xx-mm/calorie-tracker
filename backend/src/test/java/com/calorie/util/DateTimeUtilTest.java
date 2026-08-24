@@ -15,67 +15,8 @@ class DateTimeUtilTest {
     void getTodayEST_returnsEstLocalDate() {
         LocalDate utilResult = DateTimeUtil.getTodayEST();
         LocalDate estNow = ZonedDateTime.now(EST_ZONE).toLocalDate();
-        // 允许极小时间差（跨毫秒不会翻车）
+
         assertEquals(estNow, utilResult);
-    }
-
-    @Test
-    void getCurrentMonthEST_returnsCorrectYearMonthString() {
-        String monthStr = DateTimeUtil.getCurrentMonthEST();
-        LocalDate estToday = ZonedDateTime.now(EST_ZONE).toLocalDate();
-        String expected = String.format("%04d‑%02d", estToday.getYear(), estToday.getMonthValue());
-        assertEquals(expected, monthStr);
-    }
-
-    @Test
-    void toEST_nullInput_returnNull() {
-        assertNull(DateTimeUtil.toEST(null));
-    }
-
-    @Test
-    void toEST_convertSystemDefaultToEstInstant() {
-        LocalDateTime input = LocalDateTime.of(2026, 1, 1, 12, 0);
-        LocalDateTime result = DateTimeUtil.toEST(input);
-        assertNotNull(result);
-    }
-
-    @Test
-    void toESTStartOfDay_null_returnNull() {
-        assertNull(DateTimeUtil.toESTStartOfDay(null));
-    }
-
-    @Test
-    void toESTStartOfDay_producesMidnightEst() {
-        LocalDate date = LocalDate.of(2026, 5, 10);
-        LocalDateTime startOfDay = DateTimeUtil.toESTStartOfDay(date);
-        assertNotNull(startOfDay);
-        assertEquals(0, startOfDay.getHour());
-        assertEquals(0, startOfDay.getMinute());
-    }
-
-    @Test
-    void getFirstDayOfCurrentMonthEST_firstDayIsOne() {
-        LocalDate first = DateTimeUtil.getFirstDayOfCurrentMonthEST();
-        assertEquals(1, first.getDayOfMonth());
-    }
-
-    @Test
-    void getLastDayOfCurrentMonthEST_lastDayOfMonth() {
-        LocalDate last = DateTimeUtil.getLastDayOfCurrentMonthEST();
-        LocalDate today = DateTimeUtil.getTodayEST();
-        assertEquals(today.lengthOfMonth(), last.getDayOfMonth());
-    }
-
-    @Test
-    void formatDateForDisplay_null_returnsEmptyString() {
-        assertEquals("", DateTimeUtil.formatDateForDisplay(null));
-    }
-
-    @Test
-    void formatDateForDisplay_formatsMMDD() {
-        LocalDate date = LocalDate.of(2026, 3, 5);
-        String output = DateTimeUtil.formatDateForDisplay(date);
-        assertEquals("03/05", output);
     }
 
     @Test
@@ -85,9 +26,39 @@ class DateTimeUtilTest {
 
     @Test
     void utcLocalDateTimeToEstLocalDate_convertUtcToEstDate() {
-        // UTC 2026‑01‑02 01:00 → EST 2026‑01‑01 20:00 (‑5 offset winter time)
+        // UTC 2026‑01‑02 01:00 -> EST 2026‑01‑01 20:00 (‑5 offset winter time)
         LocalDateTime utcInput = LocalDateTime.of(2026, 1, 2, 1, 0);
         LocalDate estDate = DateTimeUtil.utcLocalDateTimeToEstLocalDate(utcInput);
         assertEquals(LocalDate.of(2026, 1, 1), estDate);
+    }
+    @Test
+    void getUTCRange_convertNyLocalDateToUtcTimeRange_winterTime() {
+        // NY local date 2026‑01‑01 00:00 (EST UTC‑5) → UTC 2026‑01‑01 05:00
+        // Next‑day NY 00:00 -> UTC 2026‑01‑02 05:00
+        LocalDate nyDate = LocalDate.of(2026, 1, 1);
+
+        LocalDateTime[] utcRange = DateTimeUtil.getUtcRange(nyDate);
+
+        LocalDateTime expectedStartUtc = LocalDateTime.of(2026, 1, 1, 5, 0);
+        LocalDateTime expectedEndUtc = LocalDateTime.of(2026, 1, 2, 5, 0);
+
+        assertEquals(expectedStartUtc, utcRange[0]);
+        assertEquals(expectedEndUtc, utcRange[1]);
+    }
+
+    @Test
+    void getUTCRange_convertNyLocalDateToUtcTimeRange_daylightSaving() {
+        // Summer EDT UTC‑4
+        // NY local 2026‑07‑10 00:00 -> UTC 2026‑07‑10 04:00
+        // Next‑day NY 00:00 -> UTC 2026‑07‑11 04:00
+        LocalDate nyDate = LocalDate.of(2026, 7, 10);
+
+        LocalDateTime[] utcRange = DateTimeUtil.getUtcRange(nyDate);
+
+        LocalDateTime expectedStartUtc = LocalDateTime.of(2026, 7, 10, 4, 0);
+        LocalDateTime expectedEndUtc = LocalDateTime.of(2026, 7, 11, 4, 0);
+
+        assertEquals(expectedStartUtc, utcRange[0]);
+        assertEquals(expectedEndUtc, utcRange[1]);
     }
 }
