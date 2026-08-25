@@ -168,7 +168,7 @@ mongosh --eval "db.adminCommand('ping')"
 # Option 1:
 > Press `Win + R`, type `services.msc`, press Enter to open Service window
 > Locate services named MongoDB
-> Right-click `Start`, if it\'s already Running, left it as-is\)/
+> Right-click `Start`, if it\'s already Running, leave it as-is\)/
 
 # Option 2:
 # Run PowerShell/Terminal as Administrator

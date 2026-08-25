@@ -73,7 +73,7 @@ describe('LoginComponent', () => {
 
   it('should call authService.login on valid form submit', () => {
     authService.login.and.returnValue(of({
-        token: 'fake‑jwt',
+        token: 'fake-jwt',
         username: 'testuser',
         expiresIn: 3600
         }));

@@ -6,6 +6,11 @@ import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
 import { Router } from '@angular/router';
 
+/**
+ * Global HTTP error interceptor
+ * Catches backend HTTP error responses, handles status-specific business logic,
+ * shows user-friendly toast notifications, and re-throws error for component-level consumption
+ */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
@@ -14,6 +19,13 @@ export class ErrorInterceptor implements HttpInterceptor {
     private router: Router
   ) { }
 
+  /**
+   * Intercept all http responses and catch error events from response stream
+   * 
+   * @param req outgoing http request
+   * @param next handler to forward request through interceptor pipeline
+   * @returns Observable of http events, errors will be caught and processed locally
+   */
   intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {

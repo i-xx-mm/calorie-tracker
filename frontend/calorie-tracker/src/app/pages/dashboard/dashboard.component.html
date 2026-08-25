@@ -19,25 +19,25 @@
               cy="60"
               r="54"
               class="circle-progress"
-              [ngClass]="getCaloriePercentageClass(dashboardData.calorieTracking?.percentage || 0)"
-              [style.stroke-dasharray]="getRingDashArray(dashboardData.calorieTracking?.percentage)">
+              [ngClass]="getCaloriePercentageClass(dashboardData.calorieTracking.percentage || 0)"
+              [style.stroke-dasharray]="getRingDashArray(dashboardData.calorieTracking.percentage)">
             </circle>
           </svg>
           <div class="circle-text">
-            <div class="consumed">{{ dashboardData.calorieTracking?.consumed }}</div>
+            <div class="consumed">{{ dashboardData.calorieTracking.consumed }}</div>
             <div class="unit">kcal</div>
           </div>
         </div>
 
         <div class="calorie-info">
-          <p><strong>Daily Goal:</strong> {{ dashboardData.calorieTracking?.suggestedDaily }} kcal</p>
+          <p><strong>Daily Goal:</strong> {{ dashboardData.calorieTracking.suggestedDaily }} kcal</p>
           <p>
             <strong>Remaining:</strong>
-            <span [class]="(dashboardData.calorieTracking?.remaining || 0) < 0 ? 'text-danger' : 'text-success'">
-              {{ dashboardData.calorieTracking?.remaining }} kcal
+            <span [class]="(dashboardData.calorieTracking.remaining || 0) < 0 ? 'text-danger' : 'text-success'">
+              {{ dashboardData.calorieTracking.remaining }} kcal
             </span>
           </p>
-          <p><strong>Progress:</strong> {{ dashboardData.calorieTracking?.percentage | number:'1.0-0' }}%</p>
+          <p><strong>Progress:</strong> {{ dashboardData.calorieTracking.percentage | number:'1.0-0' }}%</p>
         </div>
       </div>
 

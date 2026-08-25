@@ -47,7 +47,7 @@ describe('RegisterComponent', () => {
     expect(component.registerForm.valid).toBeFalse();
   });
 
-  it('password mismatch triggers form‑level mismatch error', () => {
+  it('password mismatch triggers form-level mismatch error', () => {
     component.registerForm.setValue({
       username: 'testuser',
       height: 170,

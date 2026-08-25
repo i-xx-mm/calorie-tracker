@@ -36,13 +36,13 @@ describe('FoodService', () => {
 
   it('getFoodLogByDate appends date query param', () => {
     apiService.get.and.returnValue(of({} as FoodLog));
-    service.getFoodLogByDate('2026‑08‑21').subscribe();
-    expect(apiService.get).toHaveBeenCalledWith('/foodlogs?date=2026‑08‑21');
+    service.getFoodLogByDate('2026-08-21').subscribe();
+    expect(apiService.get).toHaveBeenCalledWith('/foodlogs?date=2026-08-21');
   });
 
   it('createFoodLog POST foodlog payload', () => {
     const logPayload: Omit<FoodLog, 'id'> = {
-      date: '2026‑08‑21',
+      date: '2026-08-21',
       username: 'testuser',
       foods: [],
       totalCalories: 0
@@ -52,29 +52,29 @@ describe('FoodService', () => {
     expect(apiService.post).toHaveBeenCalledWith('/foodlogs', logPayload);
   });
 
-  it('addFoodEntry builds payload, uses passed‑in date if provided', () => {
+  it('addFoodEntry builds payload, uses passed-in date if provided', () => {
     apiService.post.and.returnValue(of({} as FoodLog));
-    service.addFoodEntry('oatmeal', 220, 'breakfast note', '2026‑08‑20').subscribe();
+    service.addFoodEntry('oatmeal', 220, 'breakfast note', '2026-08-20').subscribe();
 
     expect(apiService.post).toHaveBeenCalledWith('/foodlogs', {
       foodName: 'oatmeal',
       calorie: 220,
       note: 'breakfast note',
-      date: '2026‑08‑20'
+      date: '2026-08-20'
     });
   });
 
   it('updateFoodEntry calls PUT with logId and index query param', () => {
     const payload = { foodName: 'rice', calorie: 180, note: '' };
     apiService.put.and.returnValue(of({} as FoodLog));
-    service.updateFoodEntry('log‑123', 2, 'rice', 180).subscribe();
-    expect(apiService.put).toHaveBeenCalledWith('/foodlogs/log‑123?index=2', payload);
+    service.updateFoodEntry('log-123', 2, 'rice', 180).subscribe();
+    expect(apiService.put).toHaveBeenCalledWith('/foodlogs/log-123?index=2', payload);
   });
 
   it('deleteFoodEntry calls DELETE with logId and index', () => {
     apiService.delete.and.returnValue(of({} as FoodLog));
-    service.deleteFoodEntry('log‑123', 0).subscribe();
-    expect(apiService.delete).toHaveBeenCalledWith('/foodlogs/log‑123?index=0');
+    service.deleteFoodEntry('log-123', 0).subscribe();
+    expect(apiService.delete).toHaveBeenCalledWith('/foodlogs/log-123?index=0');
   });
 
   it('getTodayDashboard GET /dashboard/today', () => {

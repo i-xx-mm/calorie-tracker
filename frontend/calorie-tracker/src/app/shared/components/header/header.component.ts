@@ -1,7 +1,6 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
@@ -21,7 +20,8 @@ import { trigger, transition, style, animate } from '@angular/animations';
   ]
 })
 export class HeaderComponent implements OnInit {
-  currentUser: User | null = null;
+  @ViewChild('avatarDropdownRef') avatarDropdownRef!: ElementRef<HTMLElement>;
+  currentUser$ = this.authService.currentUser$;
   showDropdown = false;
   
   avatarColors = [
@@ -39,13 +39,6 @@ export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.currentUser = user;
-      if(this.currentUser) {
-        this.currentUser.username = this.currentUser.username ?? '';
-      }
-    });
-    
     // Load saved avatar color from localStorage
     const savedColor = localStorage.getItem('avatarColor');
     if (savedColor && this.avatarColors.includes(savedColor)) {
@@ -53,7 +46,8 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  toggleDropdown(): void {
+  toggleDropdown(event: MouseEvent): void {
+    event.stopPropagation();
     this.showDropdown = !this.showDropdown;
   }
 
@@ -74,9 +68,10 @@ export class HeaderComponent implements OnInit {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-    const headerElement = document.querySelector('app-header');
-    if (!headerElement?.contains(target)) {
+    if (!this.avatarDropdownRef) return;
+    const target = event.target as Node;
+    const isClickInside = this.avatarDropdownRef.nativeElement.contains(target);
+    if (!isClickInside) {
       this.closeDropdown();
     }
   }

@@ -3,38 +3,42 @@ import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { User } from '../models/user.model';
 
+/**
+ * User service handles user profile API operations
+ */
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   constructor(private apiService: ApiService) { }
 
+  /**
+   * Fetch currently authenticated user's own profile
+   * 
+   * @returns Observable of current User profile
+   */
   getCurrentUser(): Observable<User> {
     return this.apiService.get<User>('/users/me');
   }
 
+  /**
+   * Fetch public user profile by username
+   * 
+   * @param username target user username
+   * @returns Observable of target User profile
+   */
   getProfile(username: string): Observable<User> {
     return this.apiService.get<User>(`/users/${username}`);
   }
 
+  /**
+   * Update user profile with partial payload
+   * 
+   * @param username target user username
+   * @param profile partial User object containing fields to update
+   * @returns Observable updated User profile from backend
+   */
   updateProfile(username: string, profile: Partial<User>): Observable<User> {
     return this.apiService.put<User>(`/users/${username}`, profile);
-  }
-
-  calculateBMI(heightCm: number, weightKg: number): number {
-    const heightM = heightCm / 100;
-    return Math.round((weightKg / (heightM * heightM)) * 10) / 10;
-  }
-
-  getBMICategory(bmi: number): string {
-    if (bmi < 18.5) return 'Underweight';
-    if (bmi < 25) return 'Normal Weight';
-    if (bmi < 30) return 'Overweight';
-    return 'Obese';
-  }
-
-  getBMIStatus(bmi: number): string {
-    if (bmi < 18.5 || bmi >= 30) return 'Unhealthy';
-    return 'Healthy';
   }
 }
