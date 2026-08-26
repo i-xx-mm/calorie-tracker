@@ -7,14 +7,14 @@ import { User } from '../models/user.model';
  * User service handles user profile API operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserService {
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService) {}
 
   /**
    * Fetch currently authenticated user's own profile
-   * 
+   *
    * @returns Observable of current User profile
    */
   getCurrentUser(): Observable<User> {
@@ -23,7 +23,7 @@ export class UserService {
 
   /**
    * Fetch public user profile by username
-   * 
+   *
    * @param username target user username
    * @returns Observable of target User profile
    */
@@ -33,7 +33,7 @@ export class UserService {
 
   /**
    * Update user profile with partial payload
-   * 
+   *
    * @param username target user username
    * @param profile partial User object containing fields to update
    * @returns Observable updated User profile from backend

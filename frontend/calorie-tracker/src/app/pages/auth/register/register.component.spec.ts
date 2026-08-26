@@ -15,7 +15,10 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     const authSpy = jasmine.createSpyObj('AuthService', ['register']);
-    const notifySpy = jasmine.createSpyObj('NotificationService', ['success', 'error']);
+    const notifySpy = jasmine.createSpyObj('NotificationService', [
+      'success',
+      'error',
+    ]);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
@@ -24,12 +27,14 @@ describe('RegisterComponent', () => {
       providers: [
         { provide: AuthService, useValue: authSpy },
         { provide: NotificationService, useValue: notifySpy },
-        { provide: Router, useValue: routerSpy }
-      ]
+        { provide: Router, useValue: routerSpy },
+      ],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    notificationService = TestBed.inject(NotificationService) as jasmine.SpyObj<NotificationService>;
+    notificationService = TestBed.inject(
+      NotificationService,
+    ) as jasmine.SpyObj<NotificationService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
@@ -55,7 +60,7 @@ describe('RegisterComponent', () => {
       age: 25,
       gender: 'female',
       password: '123456',
-      confirmPassword: '654321'
+      confirmPassword: '654321',
     });
     expect(component.registerForm.hasError('mismatch')).toBeTrue();
   });
@@ -68,17 +73,19 @@ describe('RegisterComponent', () => {
       age: 25,
       gender: 'female',
       password: '123456',
-      confirmPassword: '123456'
+      confirmPassword: '123456',
     });
     expect(component.registerForm.hasError('mismatch')).toBeFalse();
   });
 
   it('calls authService.register on valid submit, strips confirmPassword', () => {
-    authService.register.and.returnValue(of({
+    authService.register.and.returnValue(
+      of({
         token: '',
         username: 'testuser',
-        expiresIn: 3600
-        }));
+        expiresIn: 3600,
+      }),
+    );
 
     const formValue = {
       username: 'testuser',
@@ -87,7 +94,7 @@ describe('RegisterComponent', () => {
       age: 25,
       gender: 'female',
       password: '123456',
-      confirmPassword: '123456'
+      confirmPassword: '123456',
     };
     component.registerForm.setValue(formValue);
     component.onSubmit();
@@ -98,7 +105,7 @@ describe('RegisterComponent', () => {
       weight: 70,
       age: 25,
       gender: 'female',
-      password: '123456'
+      password: '123456',
     });
   });
 
@@ -110,7 +117,7 @@ describe('RegisterComponent', () => {
       age: '',
       gender: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
     });
     component.onSubmit();
     expect(authService.register).not.toHaveBeenCalled();

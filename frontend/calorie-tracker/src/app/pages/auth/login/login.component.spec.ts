@@ -14,8 +14,14 @@ describe('LoginComponent', () => {
   let router: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    const authSpy = jasmine.createSpyObj('AuthService', ['login', 'reloadUserFromStorage']);
-    const notifySpy = jasmine.createSpyObj('NotificationService', ['success', 'error']);
+    const authSpy = jasmine.createSpyObj('AuthService', [
+      'login',
+      'reloadUserFromStorage',
+    ]);
+    const notifySpy = jasmine.createSpyObj('NotificationService', [
+      'success',
+      'error',
+    ]);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
@@ -24,12 +30,14 @@ describe('LoginComponent', () => {
       providers: [
         { provide: AuthService, useValue: authSpy },
         { provide: NotificationService, useValue: notifySpy },
-        { provide: Router, useValue: routerSpy }
-      ]
+        { provide: Router, useValue: routerSpy },
+      ],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    notificationService = TestBed.inject(NotificationService) as jasmine.SpyObj<NotificationService>;
+    notificationService = TestBed.inject(
+      NotificationService,
+    ) as jasmine.SpyObj<NotificationService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
@@ -72,21 +80,23 @@ describe('LoginComponent', () => {
   });
 
   it('should call authService.login on valid form submit', () => {
-    authService.login.and.returnValue(of({
+    authService.login.and.returnValue(
+      of({
         token: 'fake-jwt',
         username: 'testuser',
-        expiresIn: 3600
-        }));
+        expiresIn: 3600,
+      }),
+    );
 
     component.loginForm.setValue({
       username: 'testuser',
-      password: '123456'
+      password: '123456',
     });
     component.onSubmit();
 
     expect(authService.login).toHaveBeenCalledWith({
       username: 'testuser',
-      password: '123456'
+      password: '123456',
     });
   });
 

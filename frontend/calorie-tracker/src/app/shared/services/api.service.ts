@@ -8,12 +8,12 @@ import { environment } from '../../../environments/environment';
  * Provides generic CRUD helper methods with base api url pre-configured
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApiService {
   private apiUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   get<T>(endpoint: string): Observable<T> {
     return this.http.get<T>(`${this.apiUrl}${endpoint}`);

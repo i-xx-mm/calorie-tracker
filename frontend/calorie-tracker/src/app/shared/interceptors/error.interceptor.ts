@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpErrorResponse,
+} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
@@ -16,17 +22,20 @@ export class ErrorInterceptor implements HttpInterceptor {
   constructor(
     private authService: AuthService,
     private notificationService: NotificationService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   /**
    * Intercept all http responses and catch error events from response stream
-   * 
+   *
    * @param req outgoing http request
    * @param next handler to forward request through interceptor pipeline
    * @returns Observable of http events, errors will be caught and processed locally
    */
-  intercept(req: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  intercept(
+    req: HttpRequest<unknown>,
+    next: HttpHandler,
+  ): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
         let message = 'An error occurred';
@@ -51,7 +60,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
         this.notificationService.error(message);
         return throwError(() => error);
-      })
+      }),
     );
   }
 }

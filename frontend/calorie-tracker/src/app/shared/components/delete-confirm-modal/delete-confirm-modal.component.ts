@@ -4,7 +4,7 @@ import { FoodItem } from '../../models/food.model';
 @Component({
   selector: 'app-delete-confirm-modal',
   templateUrl: './delete-confirm-modal.component.html',
-  styleUrls: ['./delete-confirm-modal.component.css']
+  styleUrls: ['./delete-confirm-modal.component.css'],
 })
 export class DeleteConfirmModalComponent {
   @Input() isOpen = false;

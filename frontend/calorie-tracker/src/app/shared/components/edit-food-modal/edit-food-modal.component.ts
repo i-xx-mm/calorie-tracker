@@ -5,7 +5,7 @@ import { FoodItem } from '../../models/food.model';
 @Component({
   selector: 'app-edit-food-modal',
   templateUrl: './edit-food-modal.component.html',
-  styleUrls: ['./edit-food-modal.component.css']
+  styleUrls: ['./edit-food-modal.component.css'],
 })
 export class EditFoodModalComponent {
   @Input() isOpen = false;
@@ -24,7 +24,7 @@ export class EditFoodModalComponent {
       this.editForm.patchValue({
         name: this.foodItem.name,
         calorie: this.foodItem.calorie,
-        note: this.foodItem.note || ''
+        note: this.foodItem.note || '',
       });
     }
   }
@@ -32,8 +32,11 @@ export class EditFoodModalComponent {
   private initializeForm(): void {
     this.editForm = this.formBuilder.group({
       name: ['', [Validators.required]],
-      calorie: ['', [Validators.required, Validators.min(1), Validators.max(10000)]],
-      note: ['']
+      calorie: [
+        '',
+        [Validators.required, Validators.min(1), Validators.max(10000)],
+      ],
+      note: [''],
     });
   }
 
@@ -45,12 +48,12 @@ export class EditFoodModalComponent {
     if (this.editForm.invalid || !this.foodItem) {
       return;
     }
-    
+
     const updatedFood: FoodItem = {
       id: this.foodItem.id,
       name: this.editForm.get('name')?.value,
       calorie: this.editForm.get('calorie')?.value,
-      note: this.editForm.get('note')?.value || ''
+      note: this.editForm.get('note')?.value || '',
     };
 
     this.save.emit(updatedFood);

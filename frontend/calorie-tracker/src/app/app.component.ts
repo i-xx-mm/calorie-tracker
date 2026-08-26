@@ -9,12 +9,14 @@ import { Component, OnInit } from '@angular/core';
       <router-outlet></router-outlet>
     </main>
   `,
-  styles: [`
-    main {
-      padding: 2rem 0;
-      min-height: calc(100vh - 60px);
-    }
-  `]
+  styles: [
+    `
+      main {
+        padding: 2rem 0;
+        min-height: calc(100vh - 60px);
+      }
+    `,
+  ],
 })
 export class AppComponent implements OnInit {
   ngOnInit(): void {

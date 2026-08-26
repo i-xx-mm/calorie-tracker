@@ -15,7 +15,6 @@ export interface Notification {
   duration?: number;
 }
 
-
 /**
  * Global notification service managing toast message state
  * Uses BehaviorSubject to hold notification array, provides typed helper methods for each alert type
@@ -23,14 +22,17 @@ export interface Notification {
  * Supports auto-dismiss via setTimeout and manual removal/clear-all operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotificationService implements OnDestroy {
   /** Internal subject holding reactive list of active notifications */
   private notifications$ = new BehaviorSubject<Notification[]>([]);
 
   /** Track pending auto-dismiss timeout ids to prevent memory leak */
-  private readonly timeoutMap = new Map<string, ReturnType<typeof setTimeout>>();
+  private readonly timeoutMap = new Map<
+    string,
+    ReturnType<typeof setTimeout>
+  >();
 
   /**
    * Get read-only observable stream for notification list
@@ -60,17 +62,21 @@ export class NotificationService implements OnDestroy {
    * Private helper: create notification object, append to subject stream
    * Schedules auto‑removal setTimeout when duration > 0, store timer id for cleanup
    * Uses timestamp string as unique notification id
-   * 
+   *
    * @param message display message
    * @param type notification severity type
    * @param duration auto dismiss delay in milliseconds
    */
-  private addNotification(message: string, type: Notification['type'], duration: number): void {
+  private addNotification(
+    message: string,
+    type: Notification['type'],
+    duration: number,
+  ): void {
     const notification: Notification = {
       message,
       type,
       id: Date.now().toString(),
-      duration
+      duration,
     };
 
     const current = this.notifications$.value;
@@ -84,7 +90,7 @@ export class NotificationService implements OnDestroy {
 
   /**
    * Remove single notification by id
-   * 
+   *
    * @param id target notification unique id
    */
   remove(id: string): void {
@@ -95,12 +101,12 @@ export class NotificationService implements OnDestroy {
       this.timeoutMap.delete(id);
     }
     const current = this.notifications$.value;
-    this.notifications$.next(current.filter(n => n.id !== id));
+    this.notifications$.next(current.filter((n) => n.id !== id));
   }
 
   /**
    * Public alias for removing single notification, called from UI toast component
-   * 
+   *
    * @param id target notification unique id
    */
   removeNotification(id: string): void {

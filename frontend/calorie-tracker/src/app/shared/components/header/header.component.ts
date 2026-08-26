@@ -1,4 +1,10 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -11,19 +17,25 @@ import { trigger, transition, style, animate } from '@angular/animations';
     trigger('slideDown', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(-10px)' }),
-        animate('150ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+        animate(
+          '150ms ease-out',
+          style({ opacity: 1, transform: 'translateY(0)' }),
+        ),
       ]),
       transition(':leave', [
-        animate('150ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
-      ])
-    ])
-  ]
+        animate(
+          '150ms ease-in',
+          style({ opacity: 0, transform: 'translateY(-10px)' }),
+        ),
+      ]),
+    ]),
+  ],
 })
 export class HeaderComponent implements OnInit {
   @ViewChild('avatarDropdownRef') avatarDropdownRef!: ElementRef<HTMLElement>;
   currentUser$ = this.authService.currentUser$;
   showDropdown = false;
-  
+
   avatarColors = [
     '#E8A8B8',
     '#D498AD',
@@ -32,11 +44,14 @@ export class HeaderComponent implements OnInit {
     '#C2B2D0',
     '#B0C8E0',
     '#D8B4C2',
-    '#c9dbc9'
+    '#c9dbc9',
   ];
   avatarColor = '#94B8D8';
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     // Load saved avatar color from localStorage

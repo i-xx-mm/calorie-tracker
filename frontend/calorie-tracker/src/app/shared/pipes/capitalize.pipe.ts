@@ -5,12 +5,12 @@ import { Pipe, PipeTransform } from '@angular/core';
  * Returns empty string for null/undefined/non-string input.
  */
 @Pipe({
-  name: 'capitalize'
+  name: 'capitalize',
 })
 export class CapitalizePipe implements PipeTransform {
   /**
    * Capitalize first letter, keep remaining characters unchanged
-   * 
+   *
    * @param value raw input string to transform
    * @returns string with first character uppercase; empty string for invalid input
    */

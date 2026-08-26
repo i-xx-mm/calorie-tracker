@@ -15,14 +15,9 @@ import { CapitalizePipe } from './pipes/capitalize.pipe';
     NotificationContainerComponent,
     EditFoodModalComponent,
     DeleteConfirmModalComponent,
-    CapitalizePipe
+    CapitalizePipe,
   ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   exports: [
     CommonModule,
     FormsModule,
@@ -32,7 +27,7 @@ import { CapitalizePipe } from './pipes/capitalize.pipe';
     NotificationContainerComponent,
     EditFoodModalComponent,
     DeleteConfirmModalComponent,
-    CapitalizePipe
-  ]
+    CapitalizePipe,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}
