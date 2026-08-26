@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserService } from '../../shared/services/user.service';
-import { NotificationService } from '../../shared/services/notification.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { User } from '../../shared/models/user.model';
 import { AuthService } from '../../shared/services/auth.service';
+import { NotificationService } from '../../shared/services/notification.service';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   currentUser: User | null = null;
   loading = true;
@@ -19,49 +21,66 @@ export class ProfileComponent implements OnInit {
   bmi: number | null = null;
   bmiStatus: string = '';
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
     private notificationService: NotificationService,
     private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
     this.loadUserProfile();
   }
 
+  ngOnDestroy(): void {
+    this.loading = false;
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   // Initialize form with default empty values
   initializeForm(): void {
     this.profileForm = this.formBuilder.group({
       username: [{ value: '', disabled: true }],
-      height: ['', [Validators.required, Validators.min(50), Validators.max(300)]],
-      weight: ['', [Validators.required, Validators.min(20), Validators.max(500)]],
+      height: [
+        '',
+        [Validators.required, Validators.min(50), Validators.max(300)],
+      ],
+      weight: [
+        '',
+        [Validators.required, Validators.min(20), Validators.max(500)],
+      ],
       age: ['', [Validators.required, Validators.min(13), Validators.max(120)]],
-      gender: ['', Validators.required]
+      gender: ['', Validators.required],
     });
   }
 
   loadUserProfile(): void {
     this.loading = true;
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => {
-        if (!user) {
-          this.notificationService.error('User data not available');
+    this.userService
+      .getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          if (!user) {
+            this.notificationService.error('User data not available');
+            this.loading = false;
+            return;
+          }
+          this.currentUser = user;
+          this.updateFormWithUser(user);
+          this.calculateBMI();
           this.loading = false;
-          return;
-        }
-        this.currentUser = user;
-        this.updateFormWithUser(user);
-        this.calculateBMI();
-        this.loading = false;
-      },
-      error: (error) => {
-        this.notificationService.error('Failed to load profile');
-        this.loading = false;
-      }
-    });
+        },
+        error: () => {
+          this.notificationService.error('Failed to load profile');
+          this.loading = false;
+        },
+      });
   }
 
   // Update form with user data (after initialization)
@@ -71,14 +90,19 @@ export class ProfileComponent implements OnInit {
       height: user.height || '',
       weight: user.currentWeight || '',
       age: user.age || '',
-      gender: user.gender || ''
+      gender: user.gender || '',
     });
   }
 
   calculateBMI(): void {
-    if (this.currentUser && this.currentUser.height && this.currentUser.currentWeight) {
+    if (
+      this.currentUser &&
+      this.currentUser.height &&
+      this.currentUser.currentWeight
+    ) {
       const heightInMeters = this.currentUser.height / 100;
-      this.bmi = this.currentUser.currentWeight / (heightInMeters * heightInMeters);
+      this.bmi =
+        this.currentUser.currentWeight / (heightInMeters * heightInMeters);
       this.bmiStatus = this.getBMIStatus(this.bmi);
     }
   }
@@ -107,7 +131,9 @@ export class ProfileComponent implements OnInit {
 
   onSubmit(): void {
     if (this.profileForm.invalid) {
-      this.notificationService.error('Please fill in all required fields correctly');
+      this.notificationService.error(
+        'Please fill in all required fields correctly',
+      );
       return;
     }
 
@@ -116,22 +142,27 @@ export class ProfileComponent implements OnInit {
       height: this.profileForm.get('height')?.value,
       currentWeight: this.profileForm.get('weight')?.value,
       age: this.profileForm.get('age')?.value,
-      gender: this.profileForm.get('gender')?.value
+      gender: this.profileForm.get('gender')?.value,
     };
 
     const username = this.authService.getCurrentUsername();
-    this.userService.updateProfile(username, payload).subscribe({
-      next: (user) => {
-        this.currentUser = user;
-        this.calculateBMI();
-        this.notificationService.success('Profile updated successfully');
-        this.saving = false;
-      },
-      error: (error) => {
-        this.saving = false;
-        this.notificationService.error(error.error?.message || 'Failed to update profile');
-      }
-    });
+    this.userService
+      .updateProfile(username, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.currentUser = user;
+          this.calculateBMI();
+          this.notificationService.success('Profile updated successfully');
+          this.saving = false;
+        },
+        error: (error) => {
+          this.saving = false;
+          this.notificationService.error(
+            error.error?.message || 'Failed to update profile',
+          );
+        },
+      });
   }
 
   get f() {

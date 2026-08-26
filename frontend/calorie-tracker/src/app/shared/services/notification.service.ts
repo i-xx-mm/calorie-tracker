@@ -27,7 +27,7 @@ export interface Notification {
 })
 export class NotificationService implements OnDestroy {
   /** Internal subject holding reactive list of active notifications */
-  public notifications$ = new BehaviorSubject<Notification[]>([]);
+  private notifications$ = new BehaviorSubject<Notification[]>([]);
 
   /** Track pending auto-dismiss timeout ids to prevent memory leak */
   private readonly timeoutMap = new Map<string, ReturnType<typeof setTimeout>>();

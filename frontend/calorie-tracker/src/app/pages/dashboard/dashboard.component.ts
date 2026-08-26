@@ -1,17 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FoodService } from '../../shared/services/food.service';
-import { UserService } from '../../shared/services/user.service';
-import { NotificationService } from '../../shared/services/notification.service';
-import { DashboardData, MonthlyStatsResponse } from '../../shared/models/food.model';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import {
+  DashboardData,
+  MonthlyStatsResponse,
+} from '../../shared/models/food.model';
 import { User } from '../../shared/models/user.model';
+import { FoodService } from '../../shared/services/food.service';
+import { NotificationService } from '../../shared/services/notification.service';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.css']
+  styleUrls: ['./dashboard.component.css'],
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   dashboardData: DashboardData | null = null;
   monthlyStats: MonthlyStatsResponse | null = null;
   currentUser: User | null = null;
@@ -26,43 +31,62 @@ export class DashboardComponent implements OnInit {
   private chartWidth = 900;
   private chartHeight = 240;
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private router: Router,
     private foodService: FoodService,
     private userService: UserService,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+  ) {}
 
   ngOnInit(): void {
     this.loadDashboardData();
-    this.userService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.currentUser = user;
-      }
-    });
+    this.userService
+      .getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.currentUser = user;
+        },
+      });
+  }
+  ngOnDestroy(): void {
+    this.loading = false;
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadDashboardData(): void {
     this.loading = true;
-    this.foodService.getTodayDashboard().subscribe({
-      next: (data) => {
-        this.dashboardData = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.notificationService.error('Failed to load dashboard data');
-        this.loading = false;
-      }
-    });
+    this.foodService
+      .getTodayDashboard()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.dashboardData = data;
+          this.loading = false;
+        },
+        error: () => {
+          this.notificationService.error('Failed to load dashboard data');
+          this.loading = false;
+        },
+      });
 
-    this.foodService.getMonthlyStats(1).subscribe({
-      next: (stats) => {
-        if (!Array.isArray(stats.dailyData)) {
-          stats.dailyData = [];
-        }
-        this.monthlyStats = stats;
-      }
-    });
+    this.foodService
+      .getMonthlyStats(1)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (stats) => {
+          if (!Array.isArray(stats.dailyData)) {
+            stats.dailyData = [];
+          }
+          this.monthlyStats = stats;
+        },
+        error: () => {
+          this.notificationService.error('Failed to load monthly statistics');
+        },
+      });
   }
 
   getBMIStatus(bmi: number): string {
@@ -115,22 +139,31 @@ export class DashboardComponent implements OnInit {
 
     //calculate if goalCalories was not calculated in backend
     //and if metrics available
-    if (this.currentUser?.currentWeight && this.currentUser?.height &&
-        this.currentUser?.age && this.currentUser?.gender) {
-        const bmr = this.calculateBMR(
-            this.currentUser.currentWeight,
-            this.currentUser.height,
-            this.currentUser.age,
-            this.currentUser.gender
-        );
-        return Math.round(bmr * 1.55);
+    if (
+      this.currentUser?.currentWeight &&
+      this.currentUser?.height &&
+      this.currentUser?.age &&
+      this.currentUser?.gender
+    ) {
+      const bmr = this.calculateBMR(
+        this.currentUser.currentWeight,
+        this.currentUser.height,
+        this.currentUser.age,
+        this.currentUser.gender,
+      );
+      return Math.round(bmr * 1.55);
     }
 
     // default
     return 2000;
   }
 
-  calculateBMR(weight: number, height: number, age: number, gender: string): number {
+  calculateBMR(
+    weight: number,
+    height: number,
+    age: number,
+    gender: string,
+  ): number {
     // Mifflin-St Jeor formula
     if (gender === 'male') {
       return 10 * weight + 6.25 * height - 5 * age + 5;
@@ -141,12 +174,12 @@ export class DashboardComponent implements OnInit {
 
   getYAxisLabels(): number[] {
     if (!this.monthlyStats) return [];
-    
+
     const maxCalories = Math.max(
       this.monthlyStats.summary.highestDayCalories,
-      this.getCurrentUserDailyGoal() + 200
+      this.getCurrentUserDailyGoal() + 200,
     );
-    
+
     // Generate 5 labels
     const step = Math.ceil(maxCalories / 5 / 100) * 100;
     const labels = [];
@@ -158,32 +191,44 @@ export class DashboardComponent implements OnInit {
 
   getMaxCalories(): number {
     if (!this.monthlyStats) return 2500;
-    
+
     return Math.max(
       this.monthlyStats.summary.highestDayCalories,
-      this.getCurrentUserDailyGoal() + 200
+      this.getCurrentUserDailyGoal() + 200,
     );
   }
 
   getYPosition(calories: number): number {
     const maxCalories = this.getMaxCalories();
     const percentage = calories / maxCalories;
-    const y = this.chartMarginTop + (this.chartHeight - (percentage * this.chartHeight));
+    const y =
+      this.chartMarginTop + (this.chartHeight - percentage * this.chartHeight);
     return y;
   }
 
   getXPosition(index: number): number {
-    if (!this.monthlyStats || !this.monthlyStats.dailyData || this.monthlyStats.dailyData.length === 0) return this.chartMarginLeft;
+    if (
+      !this.monthlyStats ||
+      !this.monthlyStats.dailyData ||
+      this.monthlyStats.dailyData.length === 0
+    )
+      return this.chartMarginLeft;
 
     const dataCount = this.monthlyStats.dailyData.length;
-    const availableWidth = this.chartWidth - this.chartMarginLeft - this.chartMarginRight;
+    const availableWidth =
+      this.chartWidth - this.chartMarginLeft - this.chartMarginRight;
     const spacing = availableWidth / (dataCount - 1 || 1);
 
-    return this.chartMarginLeft + (index * spacing);
+    return this.chartMarginLeft + index * spacing;
   }
 
   getLinePoints(): string {
-    if (!this.monthlyStats || !this.monthlyStats.dailyData || this.monthlyStats.dailyData.length === 0) return '';
+    if (
+      !this.monthlyStats ||
+      !this.monthlyStats.dailyData ||
+      this.monthlyStats.dailyData.length === 0
+    )
+      return '';
 
     return this.monthlyStats.dailyData
       .map((day, index) => {
@@ -195,13 +240,13 @@ export class DashboardComponent implements OnInit {
   }
 
   formatDateLabel(dateString: string): string {
-    const [year,month,day] = dateString.split('-');
+    const [year, month, day] = dateString.split('-');
     return `${month}/${day}`;
   }
 
   getRingDashArray(percentage: number | undefined): string {
     const p = percentage ?? 0;
     const capped = Math.min(p, 100);
-    return `${(capped / 100 * 340)} 340`;
+    return `${(capped / 100) * 340} 340`;
   }
 }
