@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import {
@@ -11,6 +11,10 @@ import { Food, FoodItem, FoodLog } from '../../shared/models/food.model';
 import { FoodService } from '../../shared/services/food.service';
 import { NotificationService } from '../../shared/services/notification.service';
 
+/**
+ * FoodLog Component
+ * Handles daily food logging, food item search, add/edit/delete food entries
+ */
 @Component({
   selector: 'app-food-log',
   templateUrl: './food-log.component.html',
@@ -49,12 +53,36 @@ export class FoodLogComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.loadTodayFoodLog();
 
-    // Set up debounced search
+    // Debounced food‑search stream
+    // - debounceTime(300): wait for user to stop typing before sending request
+    // - distinctUntilChanged(): skip emitting if search term unchanged
+    // - switchMap: cancel previous in‑flight http request on new input, avoid stale response
+    //   empty term returns empty array to clear search result
+    // - takeUntil(this.destroy$): auto unsubscribe on component destroy to prevent memory leak
+    // On next: update result list, toggle dropdown visibility, clear loading flag
+    // On error: clear loading and show error notification
     this.searchSubject
-      .pipe(debounceTime(300), distinctUntilChanged())
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((searchTerm) => {
-        this.performSearch(searchTerm);
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((searchTerm) => {
+          if (!searchTerm) {
+            return [];
+          }
+          return this.foodService.searchFoods(searchTerm);
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe({
+        next: (response) => {
+          this.searchResults = response;
+          this.showSearchResults = this.searchResults.length > 0;
+          this.searching = false;
+        },
+        error: () => {
+          this.searching = false;
+          this.notificationService.error('Search failed');
+        },
       });
   }
 
@@ -101,20 +129,32 @@ export class FoodLogComponent implements OnInit, OnDestroy {
           this.currentFoodLog = foodLog;
           this.loading = false;
         },
-        error: (error) => {
+        error: () => {
           this.loading = false;
         },
       });
   }
 
+  /**
+   * Handles input change event for food search text input
+   * Emits trimmed search term to searchSubject for debounced backend query
+   * Immediately hides dropdown and clears result array when input becomes empty,
+   * to avoid waiting for debounce delay for UI update
+   * Sets searching loading flag when non‑empty search term is provided.
+   *
+   * @param event input change event from text input element
+   */
   onFoodSearch(event: any): void {
     const searchTerm = event.target.value.trim();
+    this.searchSubject.next(searchTerm);
+
     if (searchTerm.length < 1) {
       this.showSearchResults = false;
       this.searchResults = [];
       return;
     }
-    this.searchSubject.next(searchTerm);
+
+    this.searching = true;
   }
 
   clearFoodSearch(): void {
@@ -124,24 +164,7 @@ export class FoodLogComponent implements OnInit, OnDestroy {
     this.showSearchResults = false;
     this.searchResults = [];
     this.selectedFood = null;
-  }
-
-  private performSearch(searchTerm: string): void {
-    this.searching = true;
-    this.foodService
-      .searchFoods(searchTerm)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.searchResults = response;
-          this.showSearchResults = this.searchResults.length > 0;
-          this.searching = false;
-        },
-        error: (error) => {
-          this.searching = false;
-          this.notificationService.error('Search failed');
-        },
-      });
+    this.searching = false;
   }
 
   selectFood(food: Food): void {
@@ -365,6 +388,9 @@ export class FoodLogComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Get today date string (YYYY‑MM‑DD) in America/New_York timezone
+   */
   private getTodayDateEST(): string {
     const date = new Date();
     const nyTime = new Intl.DateTimeFormat('en-US', {
@@ -379,5 +405,10 @@ export class FoodLogComponent implements OnInit, OnDestroy {
     const day = nyTime.find((p) => p.type === 'day')!.value;
 
     return `${year}-${month}-${day}`;
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.showSearchResults = false;
   }
 }

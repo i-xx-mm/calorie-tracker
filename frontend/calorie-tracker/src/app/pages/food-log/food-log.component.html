@@ -15,7 +15,7 @@
       <form [formGroup]="foodLogForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
           <label for="foodSearch">Food Name <span class="required">*</span></label>
-          <div class="search-container">
+          <div class="search-container" (click)="$event.stopPropagation()">
             <input 
               type="text" 
               id="foodSearch" 
@@ -23,8 +23,7 @@
               class="form-control"
               [class.is-invalid]="foodLogForm.get('foodSearch')?.touched && foodLogForm.get('foodSearch')?.errors"
               placeholder="Search for food..."
-              (input)="onFoodSearch($event)"
-              (focus)="showSearchResults = searchResults.length > 0">
+              (input)="onFoodSearch($event)">
             <button 
               type="button"
               class="btn-clear-search"
