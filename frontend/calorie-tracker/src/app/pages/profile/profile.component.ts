@@ -48,14 +48,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.profileForm = this.formBuilder.group({
       username: [{ value: '', disabled: true }],
       height: [
-        '',
+        null,
         [Validators.required, Validators.min(50), Validators.max(300)],
       ],
       weight: [
-        '',
+        null,
         [Validators.required, Validators.min(20), Validators.max(500)],
       ],
-      age: ['', [Validators.required, Validators.min(13), Validators.max(120)]],
+      age: [null, [Validators.required, Validators.min(13), Validators.max(120)]],
       gender: ['', Validators.required],
     });
   }

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FoodItem } from '../../models/food.model';
 
@@ -33,7 +33,7 @@ export class EditFoodModalComponent {
     this.editForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       calorie: [
-        '',
+        null,
         [Validators.required, Validators.min(1), Validators.max(10000)],
       ],
       note: [''],

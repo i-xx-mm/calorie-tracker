@@ -35,15 +35,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
       {
         username: ['', [Validators.required, Validators.minLength(3)]],
         height: [
-          '',
+          null,
           [Validators.required, Validators.min(50), Validators.max(300)],
         ],
         weight: [
-          '',
+          null,
           [Validators.required, Validators.min(20), Validators.max(500)],
         ],
         age: [
-          '',
+          null,
           [Validators.required, Validators.min(13), Validators.max(120)],
         ],
         gender: ['', Validators.required],

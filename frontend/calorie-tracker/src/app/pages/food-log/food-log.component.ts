@@ -96,7 +96,7 @@ export class FoodLogComponent implements OnInit, OnDestroy {
     this.foodLogForm = this.formBuilder.group({
       foodSearch: ['', Validators.required],
       calorie: [
-        '',
+        null,
         [
           Validators.required,
           Validators.min(1),
