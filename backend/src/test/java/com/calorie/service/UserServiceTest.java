@@ -36,7 +36,6 @@ class UserServiceTest {
         when(userRepository.findByUsername("test1")).thenReturn(Optional.of(user));
         BMIResponse resp = userService.calculateBMI("test1");
         assertEquals("Normal Weight", resp.getCategory());
-        assertEquals("Healthy", resp.getStatus());
     }
 
     @Test

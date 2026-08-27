@@ -12,10 +12,10 @@
       <!-- BMI Card -->
       <div class="card bmi-section">
         <h2>BMI Calculator</h2>
-        <div class="bmi-display" *ngIf="bmi">
-          <div class="bmi-large">{{ bmi.toFixed(1) }}</div>
-          <div [class]="'bmi-status ' + getBMIStatusClass(bmiStatus)">
-            {{ bmiStatus }}
+        <div class="bmi-display" *ngIf="bmiValue !== null">
+          <div class="bmi-large">{{ bmiValue.toFixed(1) }}</div>
+          <div [class]="'bmi-status ' + getBMIStatusClass(bmiCategory)">
+            {{ bmiCategory }}
           </div>
           <div class="bmi-details">
             <p><strong>Height:</strong> {{ currentUser.height }} cm</p>

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { concatMap, takeUntil } from 'rxjs/operators';
 import { User } from '../../shared/models/user.model';
 import { AuthService } from '../../shared/services/auth.service';
 import { NotificationService } from '../../shared/services/notification.service';
@@ -18,8 +18,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   currentUser: User | null = null;
   loading = true;
   saving = false;
-  bmi: number | null = null;
-  bmiStatus: string = '';
+
+  bmiValue: number | null = null;
+  bmiCategory: string = '';
 
   private destroy$ = new Subject<void>();
 
@@ -73,7 +74,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
           }
           this.currentUser = user;
           this.updateFormWithUser(user);
-          this.calculateBMI();
+
+          const username = this.authService.getCurrentUsername();
+          this.userService
+            .getUserBMI(username)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (res) => {
+                this.bmiValue = res.bmi;
+                this.bmiCategory = res.category;
+              },
+              error: () => {
+                this.bmiValue = null;
+                this.bmiCategory = '';
+              },
+            });
+
           this.loading = false;
         },
         error: () => {
@@ -92,26 +108,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
       age: user.age || '',
       gender: user.gender || '',
     });
-  }
-
-  calculateBMI(): void {
-    if (
-      this.currentUser &&
-      this.currentUser.height &&
-      this.currentUser.currentWeight
-    ) {
-      const heightInMeters = this.currentUser.height / 100;
-      this.bmi =
-        this.currentUser.currentWeight / (heightInMeters * heightInMeters);
-      this.bmiStatus = this.getBMIStatus(this.bmi);
-    }
-  }
-
-  getBMIStatus(bmi: number): string {
-    if (bmi < 18.5) return 'Underweight';
-    if (bmi < 25) return 'Normal Weight';
-    if (bmi < 30) return 'Overweight';
-    return 'Obese';
   }
 
   getBMIStatusClass(status: string): string {
@@ -148,18 +144,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
     const username = this.authService.getCurrentUsername();
     this.userService
       .updateProfile(username, payload)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        concatMap((updatedUser) => {
+          this.currentUser = updatedUser;
+          return this.userService.getUserBMI(username);
+        }),
+        takeUntil(this.destroy$),
+      )
       .subscribe({
-        next: (user) => {
-          this.currentUser = user;
-          this.calculateBMI();
+        next: (bmiRes) => {
+          this.bmiValue = bmiRes.bmi;
+          this.bmiCategory = bmiRes.category;
           this.notificationService.success('Profile updated successfully');
           this.saving = false;
         },
-        error: (error) => {
+        error: (err) => {
           this.saving = false;
           this.notificationService.error(
-            error.error?.message || 'Failed to update profile',
+            err.error?.message || 'Failed to update profile',
           );
         },
       });

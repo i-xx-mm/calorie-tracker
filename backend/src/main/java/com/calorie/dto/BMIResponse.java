@@ -41,12 +41,6 @@ public class BMIResponse {
     private String category;
 
     /**
-     * Overall calculation status flag
-     * e.g. Health, Unhealthy
-     */
-    private String status;
-
-    /**
      * Timestamp when BMI calculation was performed on backend.
      */
     private LocalDateTime calculatedAt;

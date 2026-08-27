@@ -122,7 +122,6 @@ class UserControllerTest {
                 .username("testuser")
                 .bmi(20.2)
                 .category("Normal Weight")
-                .status("Healthy")
                 .build();
 
         when(userService.calculateBMI("testuser"))

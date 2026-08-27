@@ -34,7 +34,6 @@ class DashboardServiceTest {
         BMIResponse bmiResp = new BMIResponse();
         bmiResp.setBmi(20.2);
         bmiResp.setCategory("Normal Weight");
-        bmiResp.setStatus("Healthy");
         when(userService.calculateBMI("test1")).thenReturn(bmiResp);
 
         when(foodLogService.getFoodLogByDate(anyString(), any(LocalDate.class)))

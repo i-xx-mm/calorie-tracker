@@ -80,7 +80,7 @@ public class UserService {
      * Requires both height and weight to be present on the User profile
      *
      * @param username target username
-     * @return BMIResponse containing BMI value, category, and health status
+     * @return BMIResponse containing BMI value, and category
      * @throws ResourceNotFoundException when user does not exist or height/weight field is missing on User profile
      */
     public BMIResponse calculateBMI(String username) {
@@ -96,7 +96,6 @@ public class UserService {
         bmi = Math.round(bmi * 10.0) / 10.0;
 
         String category = getBMICategory(bmi);
-        String status = getBMIStatus(bmi);
 
         return BMIResponse.builder()
                 .username(username)
@@ -104,7 +103,6 @@ public class UserService {
                 .weight(user.getCurrentWeight())
                 .bmi(bmi)
                 .category(category)
-                .status(status)
                 .calculatedAt(LocalDateTime.now())
                 .build();
     }
@@ -125,16 +123,6 @@ public class UserService {
         } else {
             return "Obese";
         }
-    }
-
-    /**
-     * Determine health status based on BMI category string
-     *
-     * @param bmi bmi value
-     * @return Healthy for Normal Weight(25>bmi>=18.5), otherwise Unhealthy
-     */
-    private String getBMIStatus(double bmi) {
-        return (bmi >= 18.5 && bmi < 25) ? "Healthy" : "Unhealthy";
     }
 
     /**

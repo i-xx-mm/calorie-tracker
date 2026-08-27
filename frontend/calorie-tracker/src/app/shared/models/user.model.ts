@@ -60,3 +60,15 @@ export interface RegisterRequest {
   age: number;
   gender: 'male' | 'female' | 'other';
 }
+
+/**
+ * Model mapping to backend BMIResponse DTO
+ */
+export interface BMIResponse {
+  username: string;
+  height: number;
+  weight: number;
+  bmi: number;
+  category: string;
+  calculatedAt: string;
+}

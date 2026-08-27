@@ -52,7 +52,6 @@ public class DashboardService {
         DashboardDto.BMIInfoDto bmiInfo = DashboardDto.BMIInfoDto.builder()
                 .value(bmi.getBmi())
                 .category(bmi.getCategory())
-                .status(bmi.getStatus())
                 .build();
 
         Optional<FoodLog> optionalFoodLog = foodLogService.getFoodLogByDate(username, today);

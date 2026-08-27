@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { BMIResponse, User } from '../models/user.model';
 import { ApiService } from './api.service';
-import { User } from '../models/user.model';
 
 /**
  * User service handles user profile API operations
@@ -40,5 +40,9 @@ export class UserService {
    */
   updateProfile(username: string, profile: Partial<User>): Observable<User> {
     return this.apiService.put<User>(`/users/${username}`, profile);
+  }
+
+  getUserBMI(username: string): Observable<BMIResponse> {
+    return this.apiService.get(`/users/${username}/bmi`);
   }
 }
