@@ -484,8 +484,11 @@ and must be 0–10000. Adding an entry also refreshes the matching catalogue
 entry's expiry, creating it if absent.
 
 ```http
-PUT    /api/foodlogs/{foodLogId}/items/{itemId}
-DELETE /api/foodlogs/{foodLogId}/items/{itemId}
+# Update single food item inside daily log by array index
+PUT /api/foodlogs/{foodLogId}?index=0
+
+# Delete single food item inside daily log by array index
+DELETE /api/foodlogs/{foodLogId}?index=0
 ```
 
 `PUT` body:
@@ -494,12 +497,12 @@ DELETE /api/foodlogs/{foodLogId}/items/{itemId}
 { "foodName": "salmon", "calorie": 285, "note": "seasoned" }
 ```
 
-Entries are addressed by a stable `id` assigned on creation, not by array
-position — an index shifts when another session inserts or removes an entry, so
-a queued edit could land on the wrong row. The update carries no date: the day
-is derived from the stored document. Both endpoints verify the log belongs to
-the authenticated user and return `403` otherwise, `404` for an unknown log or
-entry.
+Entries are addressed by **array index position** inside the daily food log document.
+
+Updates do not require a date in the payload; the target day is derived from the stored food log document.
+Both endpoints verify the log belongs to the authenticated user, returning **403** for unauthorized access and **404** if the log does not exist.
+
+Adding or updating a food entry refreshes the matching global food catalogue entry’s expiry timestamp, creating the catalogue record if it does not exist.
 
 ### Dashboard
 
@@ -823,6 +826,7 @@ Documented deliberately rather than left to be discovered.
 | `chart.js` and `ng2-charts` unused | Dependency surface for no benefit | Remove them, or adopt them and retire the hand-rolled SVG chart |
 | Entry ids backfilled lazily on read | A GET can perform a write for legacy documents | A one-off migration keeps reads pure |
 | Two-collection registration is not transactional | A failed profile write is compensated, and the compensation can itself fail | Multi-document transactions, which need a replica set |
+| Index-based food item update/delete | Concurrent item insertion/deletion shifts array indexes, causing possible wrong-row updates or deletions | Refactor embedded food items to use unique `itemId` stable identifiers and item-level API routing |
 
 ---
 
